@@ -8,9 +8,8 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLU;
 import android.opengl.GLSurfaceView.Renderer;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Map;
 
 /**
  * User: Austin Wagner
@@ -30,12 +29,9 @@ public class OpenGLRenderer implements Renderer {
         o.inScaled = false;
 
 
-        HashMap<String, Coordinate> timesCoords = reader.getTimeCoordMap("1000,52,52");
-        Coordinate coord;
-        for (HashMap.Entry<String, Coordinate> entry : timesCoords.entrySet()) {
-            coord = entry.getValue();
-            buttons.add(new Button(BitmapFactory.decodeResource(context.getResources(), R.drawable.button, o), coord.x, coord.y));
-
+        ArrayList<ButtonInfo> timesCoords = reader.getButtonInfoList("1000,52,52,0");
+        for (ButtonInfo infoList : timesCoords) {
+            buttons.add(new Button(BitmapFactory.decodeResource(context.getResources(), R.drawable.button, o), infoList.x, infoList.y));
         }
 
     }                    /*

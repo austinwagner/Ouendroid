@@ -9,22 +9,21 @@ package com.wagner.ouendroid;
  */
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Scanner;
-import java.util.List;
 
 public class FileReader {
     public FileReader() {
 
     }
-    public HashMap getTimeCoordMap(String inFile) {
+    public ArrayList<ButtonInfo> getButtonInfoList(String inFile) {
         final File file;
-        String time;
+        int time;
         String xCoord;
         String yCoord;
-        HashMap<String,Coordinate> timesCoords = new HashMap<String,Coordinate>();
+        int color;
+        ArrayList<ButtonInfo> timesCoords = new ArrayList<ButtonInfo>();
 
                 //file = new File(inFile);
 
@@ -36,11 +35,12 @@ public class FileReader {
 
                     while(scanner.hasNextLine())
                     {
-                        time   = scanner.next();
+                        time   = Integer.parseInt(scanner.next());
                         xCoord = scanner.next();
                         yCoord = scanner.next();
-                        Coordinate coord = new Coordinate(Integer.parseInt(xCoord), Integer.parseInt(yCoord));
-                        timesCoords.put(time, coord);
+                        color = Integer.parseInt(scanner.next());
+                        ButtonInfo button = new ButtonInfo(time, Integer.parseInt(xCoord), Integer.parseInt(yCoord), color);
+                        timesCoords.add(button);
 
                     }
 //                }
