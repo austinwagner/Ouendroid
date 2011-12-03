@@ -81,6 +81,8 @@ public class Button {
             return false;
     }
 
+   // public isHit(x,y)
+
 	/**
 	 * This function draws our square on screen.
 	 * @param gl

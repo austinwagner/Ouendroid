@@ -23,6 +23,13 @@ public class Ouendroid extends Activity{
         renderer = new OpenGLRenderer(this);
         view.setRenderer(renderer);
         setContentView(view);
+
+        // load music
+        // load notefile
+        // play music
+        // read notefile line by line
+
+
     }
 
     @Override
