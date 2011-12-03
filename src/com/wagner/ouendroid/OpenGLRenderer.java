@@ -4,7 +4,6 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLU;
 import android.opengl.GLSurfaceView.Renderer;
@@ -15,11 +14,11 @@ import android.opengl.GLSurfaceView.Renderer;
  * Time: 11:05 AM
  */
 public class OpenGLRenderer implements Renderer {
-    private Square s;
+    private Button s;
     public OpenGLRenderer(Context context) {
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
-        s = new Square(BitmapFactory.decodeResource(context.getResources(), R.drawable.tex, o));
+        s = new Button(BitmapFactory.decodeResource(context.getResources(), R.drawable.button, o));
     }                    /*
 	 * (non-Javadoc)
 	 *
@@ -56,7 +55,9 @@ public class OpenGLRenderer implements Renderer {
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | // OpenGL docs.
                 GL10.GL_DEPTH_BUFFER_BIT);
 
+        gl.glTranslatef(32.0f, 32.0f, 0.0f);
         s.draw(gl);
+        gl.glLoadIdentity();
     }
 
     /*

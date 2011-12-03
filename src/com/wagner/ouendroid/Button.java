@@ -16,16 +16,16 @@ import android.opengl.GLUtils;
  * Time: 11:16 AM
  */
 
-public class Square {
+public class Button {
     private Bitmap bitmap;
     private int textureId;
     private boolean loadTexture = true;
 
 	private float vertices[] = {
-		      0.0f,  0.0f, 0.0f,  // 0, Top Left
-		      0.0f, 128.0f, 0.0f,  // 1, Bottom Left
-		       128.0f, 128.0f, 0.0f,  // 2, Bottom Right
-		       128.0f,  0.0f, 0.0f,  // 3, Top Right
+		      -32.0f,  -32.0f, 0.0f,  // 0, Top Left
+		      -32.0f, 32.0f, 0.0f,  // 1, Bottom Left
+		       32.0f, 32.0f, 0.0f,  // 2, Bottom Right
+		       32.0f,  -32.0f, 0.0f,  // 3, Top Right
 		};
 
     private float textureCoordinates[] = {0.0f, 0.0f,
@@ -39,7 +39,7 @@ public class Square {
 	private ShortBuffer indexBuffer;
     private FloatBuffer textureBuffer;
 
-	public Square(Bitmap b) {
+	public Button(Bitmap b) {
 		ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
 		vbb.order(ByteOrder.nativeOrder());
 		vertexBuffer = vbb.asFloatBuffer();
