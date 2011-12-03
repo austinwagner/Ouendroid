@@ -9,6 +9,7 @@ package com.wagner.ouendroid;
  */
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -23,28 +24,27 @@ public class FileReader {
     public FileReader() {
 
     }
-    public ArrayList<ButtonInfo> getButtonInfoList(String inFile) {
+    public ArrayList<ButtonInfo> getButtonInfoList(String inFileName) {
+
         final File file;
 
+        file = new File(inFileName);
 
+        try
+        {
+            final Scanner scanner;
 
-                //file = new File(inFile);
+            scanner = new Scanner(file).useDelimiter("\n");
 
-//                try
-//                {
-                    final Scanner scanner;
-
-                    scanner = new Scanner(inFile).useDelimiter("\n");
-
-                    while(scanner.hasNext())
-                    {
-                        parseLine(scanner.next());
-                    }
-//                }
-//                catch(final FileNotFoundException ex)
-//                {
-//                    ex.printStackTrace();
-//                }
+            while(scanner.hasNext())
+            {
+                parseLine(scanner.next());
+            }
+        }
+        catch(final FileNotFoundException ex)
+        {
+            ex.printStackTrace();
+        }
         return timesCoords;
     }
     private void parseLine(String line) {
