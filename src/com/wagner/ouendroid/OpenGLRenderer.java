@@ -16,6 +16,7 @@ import java.util.LinkedList;
  */
 public class OpenGLRenderer implements Renderer {
     private LinkedList<Button> buttons = new LinkedList<Button>();
+    private Ring r = new Ring(50, 123);
     private float tapX = -1.0f;
     private float tapY = -1.0f;
 
@@ -69,6 +70,13 @@ public class OpenGLRenderer implements Renderer {
                 b.toggle();
             b.draw(gl);
         }
+
+        if (r.getRadius() < 32.0f)
+            r.setRadius(45.0f);
+        else
+            r.setRadius(r.getRadius() - 1.0f);
+
+        r.draw(gl);
 
         tapX = -1.0f;
         tapY = -1.0f;
