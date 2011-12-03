@@ -10,20 +10,23 @@ package com.wagner.ouendroid;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Scanner;
 
 public class FileReader {
+
+    int time;
+    String xCoord;
+    String yCoord;
+    int color;
+    ArrayList<ButtonInfo> timesCoords = new ArrayList<ButtonInfo>();
+
     public FileReader() {
 
     }
     public ArrayList<ButtonInfo> getButtonInfoList(String inFile) {
         final File file;
-        int time;
-        String xCoord;
-        String yCoord;
-        int color;
-        ArrayList<ButtonInfo> timesCoords = new ArrayList<ButtonInfo>();
+
+
 
                 //file = new File(inFile);
 
@@ -31,17 +34,11 @@ public class FileReader {
 //                {
                     final Scanner scanner;
 
-                    scanner = new Scanner(inFile).useDelimiter(",");
+                    scanner = new Scanner(inFile).useDelimiter("\n");
 
-                    while(scanner.hasNextLine())
+                    while(scanner.hasNext())
                     {
-                        time   = Integer.parseInt(scanner.next());
-                        xCoord = scanner.next();
-                        yCoord = scanner.next();
-                        color = Integer.parseInt(scanner.next());
-                        ButtonInfo button = new ButtonInfo(time, Integer.parseInt(xCoord), Integer.parseInt(yCoord), color);
-                        timesCoords.add(button);
-
+                        parseLine(scanner.next());
                     }
 //                }
 //                catch(final FileNotFoundException ex)
@@ -50,4 +47,15 @@ public class FileReader {
 //                }
         return timesCoords;
     }
+    private void parseLine(String line) {
+        Scanner scanner = new Scanner(line).useDelimiter(",");
+        time   = Integer.parseInt(scanner.next());
+        xCoord = scanner.next();
+        yCoord = scanner.next();
+        color = Integer.parseInt(scanner.next());
+        ButtonInfo button = new ButtonInfo(time, Integer.parseInt(xCoord), Integer.parseInt(yCoord), color);
+        timesCoords.add(button);
+
+    }
+
 }

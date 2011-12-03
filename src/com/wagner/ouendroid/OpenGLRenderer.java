@@ -29,7 +29,7 @@ public class OpenGLRenderer implements Renderer {
         o.inScaled = false;
 
 
-        ArrayList<ButtonInfo> timesCoords = reader.getButtonInfoList("1000,52,52,0");
+        ArrayList<ButtonInfo> timesCoords = reader.getButtonInfoList("1000,52,52,0\n1000,102,52,0");
         for (ButtonInfo infoList : timesCoords) {
             buttons.add(new Button(BitmapFactory.decodeResource(context.getResources(), R.drawable.button, o), infoList.x, infoList.y));
         }
