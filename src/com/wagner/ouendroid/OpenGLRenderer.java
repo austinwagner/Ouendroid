@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.opengl.GLU;
 import android.opengl.GLSurfaceView.Renderer;
+import java.util.LinkedList;
 
 /**
  * User: Austin Wagner
@@ -14,11 +15,14 @@ import android.opengl.GLSurfaceView.Renderer;
  * Time: 11:05 AM
  */
 public class OpenGLRenderer implements Renderer {
-    private Button s;
+    private LinkedList<Button> buttons = new LinkedList<Button>();
+    private float tapX = -1.0f;
+    private float tapY = -1.0f;
+
     public OpenGLRenderer(Context context) {
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
-        s = new Button(BitmapFactory.decodeResource(context.getResources(), R.drawable.button, o));
+        buttons.add(new Button(BitmapFactory.decodeResource(context.getResources(), R.drawable.button, o), 50, 123));
     }                    /*
 	 * (non-Javadoc)
 	 *
@@ -43,6 +47,11 @@ public class OpenGLRenderer implements Renderer {
                 GL10.GL_NICEST);
     }
 
+    public void setTap(float x, float y) {
+        tapX = x;
+        tapY = y;
+    }
+
     /*
       * (non-Javadoc)
       *
@@ -55,9 +64,14 @@ public class OpenGLRenderer implements Renderer {
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | // OpenGL docs.
                 GL10.GL_DEPTH_BUFFER_BIT);
 
-        gl.glTranslatef(32.0f, 32.0f, 0.0f);
-        s.draw(gl);
-        gl.glLoadIdentity();
+        for (Button b : buttons) {
+            if (tapX >= 0.0f && b.isHit(tapX, tapY))
+                b.toggle();
+            b.draw(gl);
+        }
+
+        tapX = -1.0f;
+        tapY = -1.0f;
     }
 
     /*

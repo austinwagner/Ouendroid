@@ -20,6 +20,9 @@ public class Button {
     private Bitmap bitmap;
     private int textureId;
     private boolean loadTexture = true;
+    private float color = 1.0f;
+    private float x;
+    private float y;
 
 	private float vertices[] = {
 		      -32.0f,  -32.0f, 0.0f,  // 0, Top Left
@@ -39,7 +42,7 @@ public class Button {
 	private ShortBuffer indexBuffer;
     private FloatBuffer textureBuffer;
 
-	public Button(Bitmap b) {
+	public Button(Bitmap b, float x, float y) {
 		ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
 		vbb.order(ByteOrder.nativeOrder());
 		vertexBuffer = vbb.asFloatBuffer();
@@ -60,7 +63,23 @@ public class Button {
         textureBuffer.position(0);
 
         bitmap = b;
-	}
+        this.x = x;
+        this.y = y;
+    }
+
+    public void toggle() {
+        if (color == 1.0f)
+            color = 0.0f;
+        else
+            color = 1.0f;
+    }
+
+    public boolean isHit(float tapX, float tapY) {
+        if((tapX - x)*(tapX - x) + (tapY - y)*(tapY - y) < 32 * 32)
+            return true;
+        else
+            return false;
+    }
 
 	/**
 	 * This function draws our square on screen.
@@ -72,7 +91,10 @@ public class Button {
             loadTexture = false;
         }
 
-        gl.glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
+        gl.glPushMatrix();
+        gl.glTranslatef(x, y, 0);
+
+        gl.glColor4f(1.0f, color, 1.0f, 0.0f);
 
         gl.glEnable(GL10.GL_TEXTURE_2D);
         gl.glEnable(GL10.GL_CULL_FACE);
@@ -95,6 +117,7 @@ public class Button {
         gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glDisable(GL10.GL_CULL_FACE);
         gl.glDisable(GL10.GL_TEXTURE_2D);
+        gl.glPopMatrix();
 	}
 
     private void loadGLTexture(GL10 gl) {
