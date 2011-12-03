@@ -7,7 +7,10 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.opengl.GLU;
 import android.opengl.GLSurfaceView.Renderer;
+
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * User: Austin Wagner
@@ -15,15 +18,26 @@ import java.util.LinkedList;
  * Time: 11:05 AM
  */
 public class OpenGLRenderer implements Renderer {
+
     private LinkedList<Button> buttons = new LinkedList<Button>();
     private Ring r = new Ring(50, 123);
+    FileReader reader = new FileReader();
     private float tapX = -1.0f;
     private float tapY = -1.0f;
 
     public OpenGLRenderer(Context context) {
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
-        buttons.add(new Button(BitmapFactory.decodeResource(context.getResources(), R.drawable.button, o), 50, 123));
+
+
+        HashMap<String, Coordinate> timesCoords = reader.getTimeCoordMap("1000,52,52");
+        Coordinate coord;
+        for (HashMap.Entry<String, Coordinate> entry : timesCoords.entrySet()) {
+            coord = entry.getValue();
+            buttons.add(new Button(BitmapFactory.decodeResource(context.getResources(), R.drawable.button, o), coord.x, coord.y));
+
+        }
+
     }                    /*
 	 * (non-Javadoc)
 	 *
