@@ -23,8 +23,8 @@ import java.util.LinkedList;
 public class OpenGLRenderer implements Renderer {
     private enum State { MENU, GAME }
     private State state = State.MENU;
-    private Game game = new Game();
-    private Menu menu = new Menu();
+    private Game game = new Game(this);
+    private Menu menu = new Menu(this);
     private Context context;
 
     private float tapX = -1.0f;
@@ -37,8 +37,6 @@ public class OpenGLRenderer implements Renderer {
         Character.initialize(BitmapFactory.decodeResource(context.getResources(), R.drawable.characters, o));
         Miss.initialize(BitmapFactory.decodeResource(context.getResources(), R.drawable.miss, o));
         this.context = context;
-
-        game.initialize(context, "file:///sdcard/A_Airbrushed.mp3", "sdcard/airbrushed.txt");
     }
 
     /*
@@ -74,9 +72,9 @@ public class OpenGLRenderer implements Renderer {
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
         if (state == State.MENU) {
-
+            menu.draw(gl, tapX, tapY);
         } else if (state == State.GAME) {
-            game.draw(gl);
+            game.draw(gl, tapX, tapY);
         }
     }
 
@@ -96,6 +94,10 @@ public class OpenGLRenderer implements Renderer {
         gl.glLoadIdentity();
     }
 
+    public void startGame(String song, String chart) {
+        game.initialize(context, song, chart);
+        state = State.GAME;
+    }
     public void stop() {
         game.stop();
         Button.unload();
