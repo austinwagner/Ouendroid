@@ -13,7 +13,11 @@ public class Config {
     public static final int HEALTH_PER_MISS = 20;
     public static final int HEALTH_PER_HIT = 5;
 
+    public static final int HEALTH_PER_SECOND = 2;
+
 
     public static final float RING_RADIUS = 200.0f;
     public static final float BUTTON_SIZE = 64.0f;
+
+    public static final int MISS_TEXT_DURATION = 2000;
 }

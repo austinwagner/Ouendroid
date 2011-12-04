@@ -37,8 +37,9 @@ public class OpenGLRenderer implements Renderer {
     ArrayList<ButtonInfo> timesCoords = reader.getButtonInfoList("sdcard/airbrushed.txt");
     private Bitmap buttonTexture;
     private int score = 0;
-    private int health = 100;
+    private float health = 100.0f;
     private TextPaint textPaint = new TextPaint();
+    private int lastTime;
 
     public OpenGLRenderer(Context context) {
         BitmapFactory.Options o = new BitmapFactory.Options();
@@ -95,6 +96,7 @@ public class OpenGLRenderer implements Renderer {
 
         int time = player.getCurrentPosition();
 
+        // Load in buttons that will need to be displayed
         while (readerPos < timesCoords.size()) {
             ButtonInfo info = timesCoords.get(readerPos);
             if (info.time - time < Config.RING_TIME) {
@@ -105,42 +107,46 @@ public class OpenGLRenderer implements Renderer {
             }
         }
 
+        // Perform health decrement
+        health -= (time - lastTime) / 1000.0f * Config.HEALTH_PER_SECOND;
+        if (health < 0.0f) health = 0;
+
         // Handle Tap
         if (tapX >= 0.0f && buttons.size() > 0) {
             Button b = buttons.removeFirst();
             if (b.isHit(tapX, tapY) && b.scoreMultiplier(time) > 0) {
                 score += Config.BUTTON_VALUE * b.scoreMultiplier(time);
                 health += Config.HEALTH_PER_HIT;
-                if (health > 100) health = 100;
+                if (health > 100.0f) health = 100.0f;
             } else {
-                misses.add(new Miss(b.getInfo().time + 2000, b.getInfo().x, b.getInfo().y));
-                health -= Config.HEALTH_PER_MISS;
-                if (health < 0) health = 0;
+                misses.add(new Miss(b.getInfo().time + Config.MISS_TEXT_DURATION, b.getInfo().x, b.getInfo().y));
             }
         }
 
         // Handle Timeout
         if (buttons.size() > 0 && buttons.peek().getInfo().time - time < -Config.MAX_TIME_FOR_HIT) {
             Button b = buttons.removeFirst();
-            misses.add(new Miss(b.getInfo().time + 2000, b.getInfo().x, b.getInfo().y));
-            health -= Config.HEALTH_PER_MISS;
-            if (health < 0) health = 0;
+            misses.add(new Miss(b.getInfo().time + Config.MISS_TEXT_DURATION, b.getInfo().x, b.getInfo().y));
         }
 
+        // Remove old misses
         if (misses.size() > 0 && misses.peek().getTime() <= time) {
             misses.removeFirst();
         }
 
+        // Draw buttons
         for (Button b : buttons) {
             b.draw(gl, time);
         }
 
+        // Draw misses
         for (Miss m : misses) {
             m.draw(gl);
         }
 
+
         float left = 10;
-        for (char c : String.valueOf(health).toCharArray()) {
+        for (char c : String.valueOf((int)health).toCharArray()) {
             int num = Integer.parseInt(String.valueOf(c));
             new Text(num == 0 ? 10 : num, left, 10.0f).draw(gl);
             left += 14.0f;
@@ -149,6 +155,7 @@ public class OpenGLRenderer implements Renderer {
 
         tapX = -1.0f;
         tapY = -1.0f;
+        lastTime = time;
     }
 
     /*
