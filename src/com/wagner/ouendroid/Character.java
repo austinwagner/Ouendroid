@@ -2,6 +2,7 @@ package com.wagner.ouendroid;
 
 import android.graphics.Bitmap;
 import android.opengl.GLUtils;
+import org.apache.commons.logging.Log;
 
 import javax.microedition.khronos.opengles.GL10;
 import java.nio.ByteBuffer;
@@ -15,19 +16,19 @@ import java.nio.ShortBuffer;
  * Time: 11:16 AM
  */
 
-public class Text {
+public class Character {
 
     private static Bitmap bitmap;
     private static int textureId;
     private static boolean loadTexture = true;
-    private int number;
+    private char ascii;
     private float x, y;
 
 	private float vertices[] = {
 		        0.0f,   0.0f, 0.0f,  // 0, Top Left
-		        0.0f, 14.0f, 0.0f,  // 1, Bottom Left
-		      16.0f, 14.0f, 0.0f,  // 2, Bottom Right
-		      16.0f,   0.0f, 0.0f,  // 3, Top Right
+		        0.0f, 22.0f, 0.0f,  // 1, Bottom Left
+		      14.0f, 22.0f, 0.0f,  // 2, Bottom Right
+		      14.0f,   0.0f, 0.0f,  // 3, Top Right
 	};
 
 	private short[] indices = { 0, 1, 2, 0, 2, 3 };
@@ -40,7 +41,7 @@ public class Text {
         bitmap = b;
     }
 
-	public Text(int number, float x, float y) {
+	public Character(char ascii, float x, float y) {
 		ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
 		vbb.order(ByteOrder.nativeOrder());
 		vertexBuffer = vbb.asFloatBuffer();
@@ -53,7 +54,10 @@ public class Text {
 		indexBuffer.put(indices);
 		indexBuffer.position(0);
 
-        this.number = number;
+        if (ascii >= 32 && ascii <= 126)
+            this.ascii = ascii;
+        else
+            this.ascii = 32;
         this.x = x;
         this.y = y;
     }
@@ -69,17 +73,19 @@ public class Text {
         }
 
         gl.glPushMatrix();
-        gl.glTranslatef(10.0f, 10.0f, 0.0f);
         drawButton(gl);
         gl.glPopMatrix();
 	}
 
     private void drawButton(GL10 gl) {
+        int row = (ascii - 32) / 18;
+        int col = (ascii - 32) % 18;
+
         float textureCoordinates[] = {
-              0.0546875f * (number - 1), 0.0f,
-              0.0546875f * (number - 1), 0.0625f,
-              0.0546875f * number, 0.0625f,
-              0.0546875f * number, 0.0f
+              0.0546875f * col,       0.0859375f * row,       // Top Left
+              0.0546875f * col,       0.0859375f * (row + 1), // Bottom Left
+              0.0546875f * (col + 1), 0.0859375f * (row + 1), // Bottom Right
+              0.0546875f * (col + 1), 0.0859375f * row        // Top Right
         };
 
         ByteBuffer byteBuf = ByteBuffer.allocateDirect(textureCoordinates.length * 4);

@@ -9,15 +9,9 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.opengl.GLU;
 import android.opengl.GLSurfaceView.Renderer;
-import android.opengl.GLUtils;
 import android.text.TextPaint;
-import android.util.Log;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -45,7 +39,7 @@ public class OpenGLRenderer implements Renderer {
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
         buttonTexture = BitmapFactory.decodeResource(context.getResources(), R.drawable.buttons, o);
-        Text.initialize(BitmapFactory.decodeResource(context.getResources(), R.drawable.numbers, o));
+        Character.initialize(BitmapFactory.decodeResource(context.getResources(), R.drawable.characters, o));
         Miss.initialize(BitmapFactory.decodeResource(context.getResources(), R.drawable.miss, o));
         Uri songUri = Uri.parse("file:///sdcard/A_Airbrushed.mp3");
         try {
@@ -144,11 +138,10 @@ public class OpenGLRenderer implements Renderer {
             m.draw(gl);
         }
 
-
         float left = 10;
-        for (char c : String.valueOf((int)health).toCharArray()) {
-            int num = Integer.parseInt(String.valueOf(c));
-            new Text(num == 0 ? 10 : num, left, 10.0f).draw(gl);
+        String message = "Health: " + (int)health;
+        for (char c : message.toCharArray()) {
+            new Character(c, left, 10.0f).draw(gl);
             left += 14.0f;
         }
 
