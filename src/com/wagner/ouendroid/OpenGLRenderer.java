@@ -21,10 +21,6 @@ import java.util.LinkedList;
  * Time: 11:05 AM
  */
 public class OpenGLRenderer implements Renderer {
-    private static final int BUTTON_VALUE = 100;
-    private static final int HEALTH_PER_MISS = 20;
-    private static final int HEALTH_PER_HIT = 5;
-
     private LinkedList<Button> buttons = new LinkedList<Button>();
     private int readerPos = 0;
     private MediaPlayer player = new MediaPlayer();
@@ -79,19 +75,16 @@ public class OpenGLRenderer implements Renderer {
       * android.opengl.GLSurfaceView.Renderer#onDrawFrame(javax.
           * microedition.khronos.opengles.GL10)
       */
-
-    int time = player.getCurrentPosition();
     public void onDrawFrame(GL10 gl) {
         // Clears the screen and depth buffer.
-        gl.glClear(GL10.GL_COLOR_BUFFER_BIT | // OpenGL docs.
-                GL10.GL_DEPTH_BUFFER_BIT);
+        gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-        //int time = player.getCurrentPosition();
+        int time = player.getCurrentPosition();
 
         while (readerPos < timesCoords.size()) {
             ButtonInfo info = timesCoords.get(readerPos);
-            readerPos++;
-            if (info.time - time < 2000) {
+            if (info.time - time < Config.RING_TIME) {
+                readerPos++;
                 buttons.add(new Button(buttonTexture, info));
             } else {
                 break;
@@ -101,25 +94,20 @@ public class OpenGLRenderer implements Renderer {
         if (tapX >= 0.0f && buttons.size() > 0) {
             Button b = buttons.removeFirst();
             if (b.isHit(tapX, tapY) && b.scoreMultiplier(time) > 0) {
-                score += BUTTON_VALUE * b.scoreMultiplier(time);
-                health += HEALTH_PER_HIT;
+                score += Config.BUTTON_VALUE * b.scoreMultiplier(time);
+                health += Config.HEALTH_PER_HIT;
                 if (health > 100) health = 100;
             } else {
-                health -= HEALTH_PER_MISS;
+                health -= Config.HEALTH_PER_MISS;
             }
         }
+
+        if (buttons.size() > 0 && buttons.peek().getInfo().time - time < -Config.MAX_TIME_FOR_HIT)
+            buttons.removeFirst();
 
         for (Button b : buttons) {
             b.draw(gl, time);
         }
-
-
-//        if (r.getRadius() < 32.0f)
-//            r.setRadius(45.0f);
-//        else
-//            r.setRadius(r.getRadius() - 1.0f);
-//
-//        r.draw(gl);
 
         tapX = -1.0f;
         tapY = -1.0f;
@@ -133,21 +121,11 @@ public class OpenGLRenderer implements Renderer {
           * microedition.khronos.opengles.GL10, int, int)
       */
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-        // Sets the current view port to the new size.
-        gl.glViewport(0, 0, width, height);// OpenGL docs.
-        // Select the projection matrix
-        gl.glMatrixMode(GL10.GL_PROJECTION);// OpenGL docs.
-        // Reset the projection matrix
-        gl.glLoadIdentity();// OpenGL docs.
-        // Calculate the aspect ratio of the window
+        gl.glViewport(0, 0, width, height);
+        gl.glMatrixMode(GL10.GL_PROJECTION);
+        gl.glLoadIdentity();
         GLU.gluOrtho2D(gl, 0, width, height, 0);
-
-//        GLU.gluPerspective(gl, 45.0f,
-//                (float) width / (float) height,
-//                0.1f, 100.0f);
-        // Select the modelview matrix
-        gl.glMatrixMode(GL10.GL_MODELVIEW);// OpenGL docs.
-        // Reset the modelview matrix
-        gl.glLoadIdentity();// OpenGL docs.
+        gl.glMatrixMode(GL10.GL_MODELVIEW);
+        gl.glLoadIdentity();
     }
 }

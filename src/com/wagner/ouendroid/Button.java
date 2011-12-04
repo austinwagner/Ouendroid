@@ -18,9 +18,7 @@ import android.opengl.GLUtils;
 
 public class Button {
     private static final int SEGMENTS = 20;
-    private static final float RING_RADIUS = 200.0f;
-    private static final float BUTTON_SIZE = 64.0f;
-    private static final float MAX_TIME_FOR_HIT = 200.0f;
+    private static final float BUTTON_SIZE = Config.BUTTON_SIZE; // Just to make the vertices definition cleaner
 
     private Bitmap bitmap;
     private int textureId;
@@ -125,7 +123,7 @@ public class Button {
 
     private void drawRing(GL10 gl, int time) {
         float delta = info.time - time;
-        float radius = delta / 2000.0f * RING_RADIUS;
+        float radius = (delta / Config.RING_TIME * (RING_RADIUS - BUTTON_SIZE)) + BUTTON_SIZE;
 
         gl.glColor4f(0.0f, 1.0f, 0.0f, 0.0f);
         ByteBuffer vbb = ByteBuffer.allocateDirect(SEGMENTS * 2 * 4);
@@ -150,10 +148,10 @@ public class Button {
 
     public float scoreMultiplier(int time) {
         float delta = Math.abs(time - info.time);
-        if (delta > MAX_TIME_FOR_HIT)
+        if (delta > Config.MAX_TIME_FOR_HIT)
             return 0.0f;
         else
-            return 1.0f - (delta / MAX_TIME_FOR_HIT);
+            return 1.0f - (delta / Config.MAX_TIME_FOR_HIT);
     }
 
     private float degreesToRadian(float angle) {
