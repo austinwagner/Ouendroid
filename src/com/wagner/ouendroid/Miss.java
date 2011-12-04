@@ -43,6 +43,7 @@ public class Miss {
 
     public static void initialize(Bitmap b) {
         bitmap = b;
+        loadTexture = true;
     }
 
     public Miss(int time, float x, float y) {
@@ -127,6 +128,12 @@ public class Miss {
                 GL10.GL_CLAMP_TO_EDGE);
 
         GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
+    }
+
+    public static void unload() {
+        bitmap.recycle();
+        bitmap = null;
+        loadTexture = true;
     }
 
 }

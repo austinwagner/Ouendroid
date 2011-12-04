@@ -29,16 +29,14 @@ public class OpenGLRenderer implements Renderer {
     private float tapX = -1.0f;
     private float tapY = -1.0f;
     ArrayList<ButtonInfo> timesCoords = reader.getButtonInfoList("sdcard/airbrushed.txt");
-    private Bitmap buttonTexture;
     private int score = 0;
     private float health = 100.0f;
-    private TextPaint textPaint = new TextPaint();
     private int lastTime;
 
     public OpenGLRenderer(Context context) {
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
-        buttonTexture = BitmapFactory.decodeResource(context.getResources(), R.drawable.buttons, o);
+        Button.initialize(BitmapFactory.decodeResource(context.getResources(), R.drawable.buttons, o));
         Character.initialize(BitmapFactory.decodeResource(context.getResources(), R.drawable.characters, o));
         Miss.initialize(BitmapFactory.decodeResource(context.getResources(), R.drawable.miss, o));
         Uri songUri = Uri.parse("file:///sdcard/A_Airbrushed.mp3");
@@ -49,11 +47,6 @@ public class OpenGLRenderer implements Renderer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        textPaint.setColor(Color.argb(0, 255, 255, 255));
-        textPaint.setTextSize(20.0f);
-
-
     }
 
     /*
@@ -95,7 +88,7 @@ public class OpenGLRenderer implements Renderer {
             ButtonInfo info = timesCoords.get(readerPos);
             if (info.time - time < Config.RING_TIME) {
                 readerPos++;
-                buttons.add(new Button(buttonTexture, info));
+                buttons.add(new Button(info));
             } else {
                 break;
             }
@@ -169,5 +162,8 @@ public class OpenGLRenderer implements Renderer {
 
     public void stop() {
         player.stop();
+        Button.unload();
+        Character.unload();
+        Miss.unload();
     }
 }

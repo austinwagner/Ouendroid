@@ -20,9 +20,9 @@ public class Button {
     private static final int SEGMENTS = 40;
     private static final float BUTTON_SIZE = Config.BUTTON_SIZE; // Just to make the vertices definition cleaner
 
-    private Bitmap bitmap;
-    private int textureId;
-    private boolean loadTexture = true;
+    private static Bitmap bitmap;
+    private static int textureId;
+    private static boolean loadTexture = true;
     private ButtonInfo info;
 
 	private float vertices[] = {
@@ -38,7 +38,12 @@ public class Button {
 	private ShortBuffer indexBuffer;
     private FloatBuffer textureBuffer;
 
-	public Button(Bitmap b, ButtonInfo info) {
+    public static void initialize(Bitmap b) {
+        bitmap = b;
+        loadTexture = true;
+    }
+
+	public Button(ButtonInfo info) {
 		ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
 		vbb.order(ByteOrder.nativeOrder());
 		vertexBuffer = vbb.asFloatBuffer();
@@ -51,7 +56,6 @@ public class Button {
 		indexBuffer.put(indices);
 		indexBuffer.position(0);
 
-        bitmap = b;
         this.info = info;
     }
 
@@ -178,4 +182,9 @@ public class Button {
         GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
     }
 
+    public static void unload() {
+        bitmap.recycle();
+        bitmap = null;
+        loadTexture = true;
+    }
 }

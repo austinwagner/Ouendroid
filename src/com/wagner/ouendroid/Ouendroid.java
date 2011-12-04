@@ -13,13 +13,26 @@ import android.view.WindowManager;
  * Time: 10:55 AM
  */
 public class Ouendroid extends Activity{
+    private GLSurface view;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        GLSurface view = new GLSurface(this);
+        view = new GLSurface(this);
         setContentView(view);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        view.start();
+    }
+
+    @Override
+    protected void onPause() {
+        view.stop();
+        super.onPause();
     }
 }
 

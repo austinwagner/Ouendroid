@@ -14,16 +14,20 @@ import android.view.MotionEvent;
 
 public class GLSurface extends GLSurfaceView {
     private OpenGLRenderer renderer;
+    private Context context;
+
 
     public GLSurface(Context context) {
         super(context);
+        this.context = context;
+    }
+
+    public void start() {
         renderer = new OpenGLRenderer(context);
         setRenderer(renderer);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
+    public void stop() {
         queueEvent(new Runnable() {
             public void run() {
                 renderer.stop();
