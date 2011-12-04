@@ -19,16 +19,20 @@ import java.util.LinkedList;
  * Time: 11:05 AM
  */
 public class OpenGLRenderer implements Renderer {
+    private static final int BUTTON_VALUE = 100;
+    private static final int HEALTH_PER_MISS = 20;
+    private static final int HEALTH_PER_HIT = 5;
 
     private LinkedList<Button> buttons = new LinkedList<Button>();
     private int readerPos = 0;
-    private int groupPos = 1;
     private MediaPlayer player = new MediaPlayer();
     FileReader reader = new FileReader();
     private float tapX = -1.0f;
     private float tapY = -1.0f;
     ArrayList<ButtonInfo> timesCoords = reader.getButtonInfoList("1000,52,52,0");
     private Bitmap buttonTexture;
+    private int score = 0;
+    private int health = 100;
 
     public OpenGLRenderer(Context context) {
         BitmapFactory.Options o = new BitmapFactory.Options();
@@ -45,19 +49,11 @@ public class OpenGLRenderer implements Renderer {
          * egl.EGLConfig)
 	 */
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        // Set the background color to black ( rgba ).
-        gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f);  // OpenGL docs.
-        // Enable Smooth Shading, default not really needed.
-        gl.glShadeModel(GL10.GL_SMOOTH);// OpenGL docs.
-        // Depth buffer setup.
-        gl.glClearDepthf(1.0f);// OpenGL docs.
-        // Enables depth testing.
-        gl.glEnable(GL10.GL_DEPTH_TEST);// OpenGL docs.
-        // The type of depth testing to do.
-        gl.glDepthFunc(GL10.GL_LEQUAL);// OpenGL docs.
-        // Really nice perspective calculations.
-        gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, // OpenGL docs.
-                GL10.GL_NICEST);
+        gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
+        gl.glClearDepthf(1.0f);
+        gl.glEnable(GL10.GL_DEPTH_TEST);
+        gl.glDepthFunc(GL10.GL_LEQUAL);
+        gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
     }
 
     public void setTap(float x, float y) {
@@ -92,10 +88,14 @@ public class OpenGLRenderer implements Renderer {
         }
 
         if (tapX >= 0.0f && buttons.size() > 0) {
-            if (buttons.getFirst().isHit(tapX, tapY))
-                buttons.getFirst().toggle();
-            else
-                buttons.removeFirst();
+            Button b = buttons.removeFirst();
+            if (b.isHit(tapX, tapY) && b.scoreMultiplier(time) > 0) {
+                score += BUTTON_VALUE * b.scoreMultiplier(time);
+                health += HEALTH_PER_HIT;
+                if (health > 100) health = 100;
+            } else {
+                health -= HEALTH_PER_MISS;
+            }
         }
 
         for (Button b : buttons) {

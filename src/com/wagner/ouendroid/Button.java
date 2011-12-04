@@ -20,11 +20,11 @@ public class Button {
     private static final int SEGMENTS = 20;
     private static final float RING_RADIUS = 200.0f;
     private static final float BUTTON_SIZE = 64.0f;
+    private static final float MAX_TIME_FOR_HIT = 200.0f;
 
     private Bitmap bitmap;
     private int textureId;
     private boolean loadTexture = true;
-    private float color = 1.0f;
     private ButtonInfo info;
 
 	private float vertices[] = {
@@ -32,12 +32,14 @@ public class Button {
 		      -BUTTON_SIZE / 2,  BUTTON_SIZE / 2, 0.0f,  // 1, Bottom Left
 		       BUTTON_SIZE / 2,  BUTTON_SIZE / 2, 0.0f,  // 2, Bottom Right
 		       BUTTON_SIZE / 2, -BUTTON_SIZE / 2, 0.0f,  // 3, Top Right
-		};
+	};
 
-    private float textureCoordinates[] = {0.0f, 0.0f,
-                              0.0f, 1.0f,
-                              1.0f, 1.0f,
-                              1.0f, 0.0f };
+    private float textureCoordinates[] = {
+              0.0f, 0.0f,
+              0.0f, 1.0f,
+              1.0f, 1.0f,
+              1.0f, 0.0f
+    };
 
 	private short[] indices = { 0, 1, 2, 0, 2, 3 };
 
@@ -69,13 +71,6 @@ public class Button {
         this.info = info;
     }
 
-    public void toggle() {
-        if (color == 1.0f)
-            color = 0.0f;
-        else
-            color = 1.0f;
-    }
-
     public boolean isHit(float tapX, float tapY) {
         if((tapX - info.x)*(tapX - info.x) + (tapY - info.y)*(tapY - info.y) < 32 * 32)
             return true;
@@ -105,7 +100,7 @@ public class Button {
 	}
 
     private void drawButton(GL10 gl) {
-        gl.glColor4f(1.0f, color, 1.0f, 0.0f);
+        gl.glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
 
         gl.glEnable(GL10.GL_TEXTURE_2D);
         gl.glEnable(GL10.GL_CULL_FACE);
@@ -118,11 +113,9 @@ public class Button {
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
 
 		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-		gl.glVertexPointer(3, GL10.GL_FLOAT, 0,
-                                 vertexBuffer);
+		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
 
-		gl.glDrawElements(GL10.GL_TRIANGLES, indices.length,
-				  GL10.GL_UNSIGNED_SHORT, indexBuffer);
+		gl.glDrawElements(GL10.GL_TRIANGLES, indices.length, GL10.GL_UNSIGNED_SHORT, indexBuffer);
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 
         gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
@@ -153,6 +146,14 @@ public class Button {
         gl.glDrawArrays(GL10.GL_LINE_LOOP, 0, SEGMENTS);
 
         gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+    }
+
+    public float scoreMultiplier(int time) {
+        float delta = Math.abs(time - info.time);
+        if (delta > MAX_TIME_FOR_HIT)
+            return 0.0f;
+        else
+            return 1.0f - (delta / MAX_TIME_FOR_HIT);
     }
 
     private float degreesToRadian(float angle) {
