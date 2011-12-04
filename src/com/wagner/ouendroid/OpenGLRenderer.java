@@ -44,7 +44,7 @@ public class OpenGLRenderer implements Renderer {
     public OpenGLRenderer(Context context) {
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
-        buttonTexture = BitmapFactory.decodeResource(context.getResources(), R.drawable.button, o);
+        buttonTexture = BitmapFactory.decodeResource(context.getResources(), R.drawable.buttons, o);
         Text.initialize(BitmapFactory.decodeResource(context.getResources(), R.drawable.numbers, o));
         Miss.initialize(BitmapFactory.decodeResource(context.getResources(), R.drawable.miss, o));
         Uri songUri = Uri.parse("file:///sdcard/A_Airbrushed.mp3");

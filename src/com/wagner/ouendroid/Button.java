@@ -32,13 +32,6 @@ public class Button {
 		       BUTTON_SIZE / 2, -BUTTON_SIZE / 2, 0.0f,  // 3, Top Right
 	};
 
-    private float textureCoordinates[] = {
-              0.0f, 0.0f,
-              0.0f, 1.0f,
-              1.0f, 1.0f,
-              1.0f, 0.0f
-    };
-
 	private short[] indices = { 0, 1, 2, 0, 2, 3 };
 
 	private FloatBuffer vertexBuffer;
@@ -57,13 +50,6 @@ public class Button {
 		indexBuffer = ibb.asShortBuffer();
 		indexBuffer.put(indices);
 		indexBuffer.position(0);
-
-
-        ByteBuffer byteBuf = ByteBuffer.allocateDirect(textureCoordinates.length * 4);
-        byteBuf.order(ByteOrder.nativeOrder());
-        textureBuffer = byteBuf.asFloatBuffer();
-        textureBuffer.put(textureCoordinates);
-        textureBuffer.position(0);
 
         bitmap = b;
         this.info = info;
@@ -98,6 +84,18 @@ public class Button {
 	}
 
     private void drawButton(GL10 gl) {
+        float textureCoordinates[] = {
+              0.125f * (info.number - 1), 0.125f * (info.color),
+              0.125f * (info.number - 1), 0.125f * (info.color + 1),
+              0.125f * (info.number), 0.125f * (info.color + 1),
+              0.125f * (info.number), 0.125f * (info.color)
+        };
+        ByteBuffer byteBuf = ByteBuffer.allocateDirect(textureCoordinates.length * 4);
+        byteBuf.order(ByteOrder.nativeOrder());
+        textureBuffer = byteBuf.asFloatBuffer();
+        textureBuffer.put(textureCoordinates);
+        textureBuffer.position(0);
+
         gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
         gl.glEnable(GL10.GL_TEXTURE_2D);
