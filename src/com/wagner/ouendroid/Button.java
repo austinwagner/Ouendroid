@@ -17,18 +17,21 @@ import android.opengl.GLUtils;
  */
 
 public class Button {
+    private static final int SEGMENTS = 20;
+    private static final float RING_RADIUS = 200.0f;
+    private static final float BUTTON_SIZE = 64.0f;
+
     private Bitmap bitmap;
     private int textureId;
     private boolean loadTexture = true;
     private float color = 1.0f;
-    private float x;
-    private float y;
+    private ButtonInfo info;
 
 	private float vertices[] = {
-		      -32.0f,  -32.0f, 0.0f,  // 0, Top Left
-		      -32.0f, 32.0f, 0.0f,  // 1, Bottom Left
-		       32.0f, 32.0f, 0.0f,  // 2, Bottom Right
-		       32.0f,  -32.0f, 0.0f,  // 3, Top Right
+		      -BUTTON_SIZE / 2, -BUTTON_SIZE / 2, 0.0f,  // 0, Top Left
+		      -BUTTON_SIZE / 2,  BUTTON_SIZE / 2, 0.0f,  // 1, Bottom Left
+		       BUTTON_SIZE / 2,  BUTTON_SIZE / 2, 0.0f,  // 2, Bottom Right
+		       BUTTON_SIZE / 2, -BUTTON_SIZE / 2, 0.0f,  // 3, Top Right
 		};
 
     private float textureCoordinates[] = {0.0f, 0.0f,
@@ -42,7 +45,7 @@ public class Button {
 	private ShortBuffer indexBuffer;
     private FloatBuffer textureBuffer;
 
-	public Button(Bitmap b, float x, float y) {
+	public Button(Bitmap b, ButtonInfo info) {
 		ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
 		vbb.order(ByteOrder.nativeOrder());
 		vertexBuffer = vbb.asFloatBuffer();
@@ -63,8 +66,7 @@ public class Button {
         textureBuffer.position(0);
 
         bitmap = b;
-        this.x = x;
-        this.y = y;
+        this.info = info;
     }
 
     public void toggle() {
@@ -75,27 +77,34 @@ public class Button {
     }
 
     public boolean isHit(float tapX, float tapY) {
-        if((tapX - x)*(tapX - x) + (tapY - y)*(tapY - y) < 32 * 32)
+        if((tapX - info.x)*(tapX - info.x) + (tapY - info.y)*(tapY - info.y) < 32 * 32)
             return true;
         else
             return false;
     }
 
-   // public isHit(x,y)
+    public ButtonInfo getInfo() {
+       return info;
+    }
 
 	/**
 	 * This function draws our square on screen.
 	 * @param gl
 	 */
-	public void draw(GL10 gl) {
+	public void draw(GL10 gl, int time) {
         if (loadTexture) {
             loadGLTexture(gl);
             loadTexture = false;
         }
 
         gl.glPushMatrix();
-        gl.glTranslatef(x, y, 0);
+        gl.glTranslatef(info.x, info.y, 0);
+        drawButton(gl);
+        drawRing(gl, time);
+        gl.glPopMatrix();
+	}
 
+    private void drawButton(GL10 gl) {
         gl.glColor4f(1.0f, color, 1.0f, 0.0f);
 
         gl.glEnable(GL10.GL_TEXTURE_2D);
@@ -119,8 +128,36 @@ public class Button {
         gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 		gl.glDisable(GL10.GL_CULL_FACE);
         gl.glDisable(GL10.GL_TEXTURE_2D);
-        gl.glPopMatrix();
-	}
+    }
+
+    private void drawRing(GL10 gl, int time) {
+        float delta = info.time - time;
+        float radius = delta / 2000.0f * RING_RADIUS;
+
+        gl.glColor4f(0.0f, 1.0f, 0.0f, 0.0f);
+        ByteBuffer vbb = ByteBuffer.allocateDirect(SEGMENTS * 2 * 4);
+        vbb.order(ByteOrder.nativeOrder());
+        FloatBuffer vertexBuffer = vbb.asFloatBuffer();
+        for (float i = 0; i < 360.0f; i+=(360.0f/SEGMENTS))
+        {
+            vertexBuffer.put((float)Math.cos(degreesToRadian(i))*radius);
+            vertexBuffer.put((float)Math.sin(degreesToRadian(i))*radius);
+        }
+
+        vertexBuffer.position(0);
+
+        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+
+        gl.glLineWidth(1.5f);
+		gl.glVertexPointer (2, GL10.GL_FLOAT , 0, vertexBuffer);
+        gl.glDrawArrays(GL10.GL_LINE_LOOP, 0, SEGMENTS);
+
+        gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+    }
+
+    private float degreesToRadian(float angle) {
+        return angle * (float)Math.PI / 180.0f;
+    }
 
     private void loadGLTexture(GL10 gl) {
         int[] textures = new int[1];

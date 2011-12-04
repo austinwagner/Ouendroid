@@ -4,7 +4,9 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
 import android.opengl.GLU;
 import android.opengl.GLSurfaceView.Renderer;
 
@@ -19,22 +21,22 @@ import java.util.LinkedList;
 public class OpenGLRenderer implements Renderer {
 
     private LinkedList<Button> buttons = new LinkedList<Button>();
-    private Ring r = new Ring(50, 123);
+    private int readerPos = 0;
+    private int groupPos = 1;
+    private MediaPlayer player = new MediaPlayer();
     FileReader reader = new FileReader();
     private float tapX = -1.0f;
     private float tapY = -1.0f;
+    ArrayList<ButtonInfo> timesCoords = reader.getButtonInfoList("1000,52,52,0");
+    private Bitmap buttonTexture;
 
     public OpenGLRenderer(Context context) {
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
+        buttonTexture = BitmapFactory.decodeResource(context.getResources(), R.drawable.button, o);
+    }
 
-
-        ArrayList<ButtonInfo> timesCoords = reader.getButtonInfoList("1000,52,52,0");
-        for (ButtonInfo infoList : timesCoords) {
-            buttons.add(new Button(BitmapFactory.decodeResource(context.getResources(), R.drawable.button, o), infoList.x, infoList.y));
-        }
-
-    }                    /*
+    /*
 	 * (non-Javadoc)
 	 *
 	 * @see
@@ -70,23 +72,43 @@ public class OpenGLRenderer implements Renderer {
       * android.opengl.GLSurfaceView.Renderer#onDrawFrame(javax.
           * microedition.khronos.opengles.GL10)
       */
+
+    int time = 0;
     public void onDrawFrame(GL10 gl) {
         // Clears the screen and depth buffer.
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | // OpenGL docs.
                 GL10.GL_DEPTH_BUFFER_BIT);
 
-        for (Button b : buttons) {
-            if (tapX >= 0.0f && b.isHit(tapX, tapY))
-                b.toggle();
-            b.draw(gl);
+        //int time = player.getCurrentPosition();
+
+        while (readerPos < timesCoords.size()) {
+            ButtonInfo info = timesCoords.get(readerPos);
+            readerPos++;
+            if (info.time - time < 2000) {
+                buttons.add(new Button(buttonTexture, info));
+            } else {
+                break;
+            }
         }
 
-        if (r.getRadius() < 32.0f)
-            r.setRadius(45.0f);
-        else
-            r.setRadius(r.getRadius() - 1.0f);
+        if (tapX >= 0.0f && buttons.size() > 0) {
+            if (buttons.getFirst().isHit(tapX, tapY))
+                buttons.getFirst().toggle();
+            else
+                buttons.removeFirst();
+        }
 
-        r.draw(gl);
+        for (Button b : buttons) {
+            b.draw(gl, time);
+        }
+
+
+//        if (r.getRadius() < 32.0f)
+//            r.setRadius(45.0f);
+//        else
+//            r.setRadius(r.getRadius() - 1.0f);
+//
+//        r.draw(gl);
 
         tapX = -1.0f;
         tapY = -1.0f;
