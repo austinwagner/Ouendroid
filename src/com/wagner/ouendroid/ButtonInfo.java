@@ -12,11 +12,13 @@ public class ButtonInfo {
     int x;
     int y;
     int color;
-    public ButtonInfo(int inTime, int xCoord, int yCoord, int inColor) {
+    int number;
+    public ButtonInfo(int inTime, int xCoord, int yCoord, int inColor, int inNum) {
         time = inTime;
         color = inColor;
         x = xCoord;
         y = yCoord;
+        number = inNum;
     }
 
 

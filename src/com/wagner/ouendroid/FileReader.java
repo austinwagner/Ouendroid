@@ -19,6 +19,7 @@ public class FileReader {
     String xCoord;
     String yCoord;
     int color;
+    int number = 1;
     ArrayList<ButtonInfo> timesCoords = new ArrayList<ButtonInfo>();
 
     public FileReader() {
@@ -53,7 +54,13 @@ public class FileReader {
         xCoord = scanner.next();
         yCoord = scanner.next();
         color = Integer.parseInt(scanner.next());
-        ButtonInfo button = new ButtonInfo(time, Integer.parseInt(xCoord), Integer.parseInt(yCoord), color);
+        if (timesCoords.size() != 0 && color == timesCoords.get(timesCoords.size()).color) {
+            number++;
+        }
+        else {
+            number = 1;
+        }
+        ButtonInfo button = new ButtonInfo(time, Integer.parseInt(xCoord), Integer.parseInt(yCoord), color, number);
         timesCoords.add(button);
 
     }

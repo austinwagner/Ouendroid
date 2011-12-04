@@ -123,7 +123,7 @@ public class Button {
 
     private void drawRing(GL10 gl, int time) {
         float delta = info.time - time;
-        float radius = (delta / Config.RING_TIME * (RING_RADIUS - BUTTON_SIZE)) + BUTTON_SIZE;
+        float radius = (delta / Config.RING_TIME * (Config.RING_RADIUS - BUTTON_SIZE)) + BUTTON_SIZE;
 
         gl.glColor4f(0.0f, 1.0f, 0.0f, 0.0f);
         ByteBuffer vbb = ByteBuffer.allocateDirect(SEGMENTS * 2 * 4);
