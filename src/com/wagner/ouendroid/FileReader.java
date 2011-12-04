@@ -20,7 +20,7 @@ public class FileReader {
     int yCoord;
     int comboChange;
     int color;
-    int number = 1;
+    int number = 0;
     int hitSound;
 
     ArrayList<ButtonInfo> timesCoords = new ArrayList<ButtonInfo>();

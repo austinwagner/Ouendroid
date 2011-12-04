@@ -38,8 +38,8 @@ public class Menu {
             }
 
             if (tapX > 0.0f) {
-                parent.startGame("file:///sdcard/" + files[0].getName().substring(0, files[0].getName().length() - 3) + "mp3",
-                        "/sdcard/" + files[0].getName());
+                parent.startGame("file:///sdcard/" + files[1].getName().substring(0, files[1].getName().length() - 3) + "mp3",
+                        "/sdcard/" + files[1].getName());
                 state = State.MAIN;
             }
         }

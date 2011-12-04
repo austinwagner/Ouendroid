@@ -93,7 +93,8 @@ public class Game {
             m.draw(gl);
         }
 
-        new Text().setText("Health: " + (int)health).setX(10).setY(10).draw(gl);
+        //new Text().setText("Health: " + (int)health).setX(10).setY(10).draw(gl);
+        new Text().setText(String.valueOf(time)).setX(10).setY(10).draw(gl);
         new Text().setText("Score: " + score).setX(300).setY(400).setHorizontalAlignment(Text.HorAlign.RIGHT).
                 setVerticalAlignment(Text.VertAlign.BOTTOM).draw(gl);
 

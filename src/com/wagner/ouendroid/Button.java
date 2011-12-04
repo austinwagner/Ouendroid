@@ -9,6 +9,7 @@ import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 import android.opengl.GLUtils;
+import android.util.Log;
 
 /**
  * User: Austin Wagner
@@ -125,7 +126,13 @@ public class Button {
 
     private void drawRing(GL10 gl, int time) {
         float delta = info.time - time;
-        float radius = (delta / Config.RING_TIME * (Config.RING_RADIUS - BUTTON_SIZE)) + BUTTON_SIZE;
+        float radius;
+
+        if (delta > 0) {
+            radius = (delta / Config.RING_TIME * Config.RING_RADIUS + BUTTON_SIZE / 2);
+        } else {
+            radius = (1-(-delta / Config.MAX_TIME_FOR_HIT)) * (BUTTON_SIZE / 4) + (BUTTON_SIZE / 4);
+        }
 
         gl.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
         ByteBuffer vbb = ByteBuffer.allocateDirect(SEGMENTS * 2 * 4);

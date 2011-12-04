@@ -76,6 +76,9 @@ public class OpenGLRenderer implements Renderer {
         } else if (state == State.GAME) {
             game.draw(gl, tapX, tapY);
         }
+
+        tapX = -1.0f;
+        tapY = -1.0f;
     }
 
     /*

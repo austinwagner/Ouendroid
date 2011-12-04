@@ -16,8 +16,8 @@ public class Config {
     public static final int HEALTH_PER_SECOND = 5;
 
 
-    public static final float RING_RADIUS = 200.0f;
+    public static final float RING_RADIUS = 150.0f;
     public static final float BUTTON_SIZE = 64.0f;
 
-    public static final int MISS_TEXT_DURATION = 2000;
+    public static final int MISS_TEXT_DURATION = 1200;
 }
