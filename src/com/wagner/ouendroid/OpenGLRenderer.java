@@ -4,14 +4,19 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.*;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.opengl.GLU;
 import android.opengl.GLSurfaceView.Renderer;
+import android.opengl.GLUtils;
+import android.text.TextPaint;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -31,12 +36,15 @@ public class OpenGLRenderer implements Renderer {
     private Bitmap buttonTexture;
     private int score = 0;
     private int health = 100;
+    private TextPaint textPaint = new TextPaint();
+    private int width, height;
+    private int textureId;
 
     public OpenGLRenderer(Context context) {
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
         buttonTexture = BitmapFactory.decodeResource(context.getResources(), R.drawable.button, o);
-
+        Text.initialize(BitmapFactory.decodeResource(context.getResources(), R.drawable.numbers, o));
         Uri songUri = Uri.parse("file:///sdcard/A_Airbrushed.mp3");
         try {
             player.setDataSource(context,songUri);
@@ -45,6 +53,11 @@ public class OpenGLRenderer implements Renderer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        textPaint.setColor(Color.argb(0, 255, 255, 255));
+        textPaint.setTextSize(20.0f);
+
+
     }
 
     /*
@@ -56,7 +69,7 @@ public class OpenGLRenderer implements Renderer {
          * egl.EGLConfig)
 	 */
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
+        gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         gl.glClearDepthf(1.0f);
         gl.glEnable(GL10.GL_DEPTH_TEST);
         gl.glDepthFunc(GL10.GL_LEQUAL);
@@ -109,6 +122,14 @@ public class OpenGLRenderer implements Renderer {
             b.draw(gl, time);
         }
 
+        float left = 10;
+        for (char c : String.valueOf(health).toCharArray()) {
+            int num = Integer.parseInt(String.valueOf(c));
+            new Text(num == 0 ? 10 : num, left, 10.0f).draw(gl);
+            left += 14.0f;
+        }
+
+
         tapX = -1.0f;
         tapY = -1.0f;
     }
@@ -127,5 +148,8 @@ public class OpenGLRenderer implements Renderer {
         GLU.gluOrtho2D(gl, 0, width, height, 0);
         gl.glMatrixMode(GL10.GL_MODELVIEW);
         gl.glLoadIdentity();
+
+        this.width = width;
+        this.height = height;
     }
 }

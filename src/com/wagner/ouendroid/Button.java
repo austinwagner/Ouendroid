@@ -17,7 +17,7 @@ import android.opengl.GLUtils;
  */
 
 public class Button {
-    private static final int SEGMENTS = 20;
+    private static final int SEGMENTS = 40;
     private static final float BUTTON_SIZE = Config.BUTTON_SIZE; // Just to make the vertices definition cleaner
 
     private Bitmap bitmap;
@@ -98,14 +98,13 @@ public class Button {
 	}
 
     private void drawButton(GL10 gl) {
-        gl.glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
+        gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
         gl.glEnable(GL10.GL_TEXTURE_2D);
-        gl.glEnable(GL10.GL_CULL_FACE);
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-
-        gl.glFrontFace(GL10.GL_CCW);
-		gl.glCullFace(GL10.GL_BACK);
+        gl.glDepthMask(false);
+        gl.glEnable(GL10.GL_BLEND);
+        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 
 		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, textureBuffer);
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
@@ -117,15 +116,16 @@ public class Button {
 		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
 
         gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-		gl.glDisable(GL10.GL_CULL_FACE);
         gl.glDisable(GL10.GL_TEXTURE_2D);
+        gl.glDisable(GL10.GL_BLEND);
+        gl.glDepthMask(true);
     }
 
     private void drawRing(GL10 gl, int time) {
         float delta = info.time - time;
-        float radius = (delta / Config.RING_TIME * (RING_RADIUS - BUTTON_SIZE)) + BUTTON_SIZE;
+        float radius = (delta / Config.RING_TIME * (Config.RING_RADIUS - BUTTON_SIZE)) + BUTTON_SIZE;
 
-        gl.glColor4f(0.0f, 1.0f, 0.0f, 0.0f);
+        gl.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
         ByteBuffer vbb = ByteBuffer.allocateDirect(SEGMENTS * 2 * 4);
         vbb.order(ByteOrder.nativeOrder());
         FloatBuffer vertexBuffer = vbb.asFloatBuffer();
@@ -137,6 +137,9 @@ public class Button {
 
         vertexBuffer.position(0);
 
+        gl.glEnable (GL10.GL_BLEND);
+        gl.glBlendFunc (GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        gl.glEnable (GL10.GL_LINE_SMOOTH);
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 
         gl.glLineWidth(1.5f);
@@ -144,6 +147,7 @@ public class Button {
         gl.glDrawArrays(GL10.GL_LINE_LOOP, 0, SEGMENTS);
 
         gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+        gl.glDisable(GL10.GL_BLEND);
     }
 
     public float scoreMultiplier(int time) {
