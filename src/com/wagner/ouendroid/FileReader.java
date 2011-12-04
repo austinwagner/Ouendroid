@@ -9,45 +9,53 @@ package com.wagner.ouendroid;
  */
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Scanner;
 
 public class FileReader {
+
+    int time;
+    String xCoord;
+    String yCoord;
+    int color;
+    ArrayList<ButtonInfo> timesCoords = new ArrayList<ButtonInfo>();
+
     public FileReader() {
 
     }
-    public ArrayList<ButtonInfo> getButtonInfoList(String inFile) {
+    public ArrayList<ButtonInfo> getButtonInfoList(String inFileName) {
+
         final File file;
-        int time;
-        String xCoord;
-        String yCoord;
-        int color;
-        ArrayList<ButtonInfo> timesCoords = new ArrayList<ButtonInfo>();
 
-                //file = new File(inFile);
+        file = new File(inFileName);
 
-//                try
-//                {
-                    final Scanner scanner;
+        try
+        {
+            final Scanner scanner;
 
-                    scanner = new Scanner(inFile).useDelimiter(",");
+            scanner = new Scanner(file).useDelimiter("\n");
 
-                    while(scanner.hasNextLine())
-                    {
-                        time   = Integer.parseInt(scanner.next());
-                        xCoord = scanner.next();
-                        yCoord = scanner.next();
-                        color = Integer.parseInt(scanner.next());
-                        ButtonInfo button = new ButtonInfo(time, Integer.parseInt(xCoord), Integer.parseInt(yCoord), color);
-                        timesCoords.add(button);
-
-                    }
-//                }
-//                catch(final FileNotFoundException ex)
-//                {
-//                    ex.printStackTrace();
-//                }
+            while(scanner.hasNext())
+            {
+                parseLine(scanner.next());
+            }
+        }
+        catch(final FileNotFoundException ex)
+        {
+            ex.printStackTrace();
+        }
         return timesCoords;
     }
+    private void parseLine(String line) {
+        Scanner scanner = new Scanner(line).useDelimiter(",");
+        time   = Integer.parseInt(scanner.next());
+        xCoord = scanner.next();
+        yCoord = scanner.next();
+        color = Integer.parseInt(scanner.next());
+        ButtonInfo button = new ButtonInfo(time, Integer.parseInt(xCoord), Integer.parseInt(yCoord), color);
+        timesCoords.add(button);
+
+    }
+
 }
