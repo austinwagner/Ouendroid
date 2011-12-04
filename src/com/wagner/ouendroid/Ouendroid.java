@@ -13,27 +13,13 @@ import android.view.WindowManager;
  * Time: 10:55 AM
  */
 public class Ouendroid extends Activity{
-    private OpenGLRenderer renderer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        GLSurfaceView view = new GLSurfaceView(this);
-        renderer = new OpenGLRenderer(this);
-        view.setRenderer(renderer);
+        GLSurface view = new GLSurface(this);
         setContentView(view);
-
-
-
-
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN)
-            renderer.setTap(event.getX(), event.getY());
-        return true;
     }
 }
 

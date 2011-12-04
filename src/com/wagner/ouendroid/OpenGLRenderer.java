@@ -11,6 +11,7 @@ import android.opengl.GLU;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLUtils;
 import android.text.TextPaint;
+import android.util.Log;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -27,6 +28,7 @@ import java.util.LinkedList;
  */
 public class OpenGLRenderer implements Renderer {
     private LinkedList<Button> buttons = new LinkedList<Button>();
+    private LinkedList<Miss> misses = new LinkedList<Miss>();
     private int readerPos = 0;
     private MediaPlayer player = new MediaPlayer();
     FileReader reader = new FileReader();
@@ -37,14 +39,13 @@ public class OpenGLRenderer implements Renderer {
     private int score = 0;
     private int health = 100;
     private TextPaint textPaint = new TextPaint();
-    private int width, height;
-    private int textureId;
 
     public OpenGLRenderer(Context context) {
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
         buttonTexture = BitmapFactory.decodeResource(context.getResources(), R.drawable.button, o);
         Text.initialize(BitmapFactory.decodeResource(context.getResources(), R.drawable.numbers, o));
+        Miss.initialize(BitmapFactory.decodeResource(context.getResources(), R.drawable.miss, o));
         Uri songUri = Uri.parse("file:///sdcard/A_Airbrushed.mp3");
         try {
             player.setDataSource(context,songUri);
@@ -104,6 +105,7 @@ public class OpenGLRenderer implements Renderer {
             }
         }
 
+        // Handle Tap
         if (tapX >= 0.0f && buttons.size() > 0) {
             Button b = buttons.removeFirst();
             if (b.isHit(tapX, tapY) && b.scoreMultiplier(time) > 0) {
@@ -111,15 +113,30 @@ public class OpenGLRenderer implements Renderer {
                 health += Config.HEALTH_PER_HIT;
                 if (health > 100) health = 100;
             } else {
+                misses.add(new Miss(b.getInfo().time + 2000, b.getInfo().x, b.getInfo().y));
                 health -= Config.HEALTH_PER_MISS;
+                if (health < 0) health = 0;
             }
         }
 
-        if (buttons.size() > 0 && buttons.peek().getInfo().time - time < -Config.MAX_TIME_FOR_HIT)
-            buttons.removeFirst();
+        // Handle Timeout
+        if (buttons.size() > 0 && buttons.peek().getInfo().time - time < -Config.MAX_TIME_FOR_HIT) {
+            Button b = buttons.removeFirst();
+            misses.add(new Miss(b.getInfo().time + 2000, b.getInfo().x, b.getInfo().y));
+            health -= Config.HEALTH_PER_MISS;
+            if (health < 0) health = 0;
+        }
+
+        if (misses.size() > 0 && misses.peek().getTime() <= time) {
+            misses.removeFirst();
+        }
 
         for (Button b : buttons) {
             b.draw(gl, time);
+        }
+
+        for (Miss m : misses) {
+            m.draw(gl);
         }
 
         float left = 10;
@@ -148,8 +165,9 @@ public class OpenGLRenderer implements Renderer {
         GLU.gluOrtho2D(gl, 0, width, height, 0);
         gl.glMatrixMode(GL10.GL_MODELVIEW);
         gl.glLoadIdentity();
+    }
 
-        this.width = width;
-        this.height = height;
+    public void stop() {
+        player.stop();
     }
 }

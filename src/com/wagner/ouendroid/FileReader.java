@@ -54,7 +54,7 @@ public class FileReader {
         xCoord = scanner.next();
         yCoord = scanner.next();
         color = Integer.parseInt(scanner.next());
-        if (timesCoords.size() != 0 && color == timesCoords.get(timesCoords.size()).color) {
+        if (timesCoords.size() != 0 && color == timesCoords.get(timesCoords.size() - 1).color) {
             number++;
         }
         else {
