@@ -20,12 +20,15 @@ public class Game {
     private int readerPos = 0;
     private MediaPlayer player = new MediaPlayer();
     FileReader reader = new FileReader();
-    private float tapX = -1.0f;
-    private float tapY = -1.0f;
     ArrayList<ButtonInfo> timesCoords;
     private int score = 0;
     private float health = 100.0f;
     private int lastTime;
+    private OpenGLRenderer parent;
+
+    public Game(OpenGLRenderer parent) {
+        this.parent = parent;
+    }
 
     public void initialize(Context context, String songPath, String chartPath) {
         timesCoords = reader.getButtonInfoList(chartPath);
@@ -39,7 +42,7 @@ public class Game {
         }
     }
 
-    public void draw(GL10 gl) {
+    public void draw(GL10 gl, float tapX, float tapY) {
         int time = player.getCurrentPosition();
 
         // Load in buttons that will need to be displayed
@@ -94,8 +97,6 @@ public class Game {
         new Text().setText("Score: " + score).setX(300).setY(400).setHorizontalAlignment(Text.HorAlign.RIGHT).
                 setVerticalAlignment(Text.VertAlign.BOTTOM).draw(gl);
 
-        tapX = -1.0f;
-        tapY = -1.0f;
         lastTime = time;
     }
 
