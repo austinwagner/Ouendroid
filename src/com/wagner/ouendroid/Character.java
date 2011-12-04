@@ -22,7 +22,7 @@ public class Character {
     private static int textureId;
     private static boolean loadTexture = true;
     private char ascii;
-    private float x, y;
+    private float x, y, r, g, b;
 
 	private float vertices[] = {
 		        0.0f,   0.0f, 0.0f,  // 0, Top Left
@@ -42,7 +42,7 @@ public class Character {
         loadTexture = true;
     }
 
-	public Character(char ascii, float x, float y) {
+	public Character(char ascii, float x, float y, float r, float g, float b) {
 		ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
 		vbb.order(ByteOrder.nativeOrder());
 		vertexBuffer = vbb.asFloatBuffer();
@@ -61,6 +61,9 @@ public class Character {
             this.ascii = 32;
         this.x = x;
         this.y = y;
+        this.r = r;
+        this.b = b;
+        this.g = g;
     }
 
 	/**
@@ -95,7 +98,7 @@ public class Character {
         textureBuffer.put(textureCoordinates);
         textureBuffer.position(0);
 
-        gl.glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
+        gl.glColor4f(r, g, b, 0.0f);
         gl.glTranslatef(x, y, 0.0f);
 
         gl.glEnable(GL10.GL_TEXTURE_2D);

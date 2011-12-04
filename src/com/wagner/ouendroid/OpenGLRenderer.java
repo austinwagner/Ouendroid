@@ -21,17 +21,14 @@ import java.util.LinkedList;
  * Time: 11:05 AM
  */
 public class OpenGLRenderer implements Renderer {
-    private LinkedList<Button> buttons = new LinkedList<Button>();
-    private LinkedList<Miss> misses = new LinkedList<Miss>();
-    private int readerPos = 0;
-    private MediaPlayer player = new MediaPlayer();
-    FileReader reader = new FileReader();
+    private enum State { MENU, GAME }
+    private State state = State.MENU;
+    private Game game = new Game();
+    private Menu menu = new Menu();
+    private Context context;
+
     private float tapX = -1.0f;
     private float tapY = -1.0f;
-    ArrayList<ButtonInfo> timesCoords = reader.getButtonInfoList("sdcard/airbrushed.txt");
-    private int score = 0;
-    private float health = 100.0f;
-    private int lastTime;
 
     public OpenGLRenderer(Context context) {
         BitmapFactory.Options o = new BitmapFactory.Options();
@@ -39,14 +36,9 @@ public class OpenGLRenderer implements Renderer {
         Button.initialize(BitmapFactory.decodeResource(context.getResources(), R.drawable.buttons, o));
         Character.initialize(BitmapFactory.decodeResource(context.getResources(), R.drawable.characters, o));
         Miss.initialize(BitmapFactory.decodeResource(context.getResources(), R.drawable.miss, o));
-        Uri songUri = Uri.parse("file:///sdcard/A_Airbrushed.mp3");
-        try {
-            player.setDataSource(context,songUri);
-            player.prepare();
-            player.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.context = context;
+
+        game.initialize(context, "file:///sdcard/A_Airbrushed.mp3", "sdcard/airbrushed.txt");
     }
 
     /*
@@ -81,67 +73,11 @@ public class OpenGLRenderer implements Renderer {
         // Clears the screen and depth buffer.
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-        int time = player.getCurrentPosition();
+        if (state == State.MENU) {
 
-        // Load in buttons that will need to be displayed
-        while (readerPos < timesCoords.size()) {
-            ButtonInfo info = timesCoords.get(readerPos);
-            if (info.time - time < Config.RING_TIME) {
-                readerPos++;
-                buttons.add(new Button(info));
-            } else {
-                break;
-            }
+        } else if (state == State.GAME) {
+            game.draw(gl);
         }
-
-        // Perform health decrement
-        health -= (time - lastTime) / 1000.0f * Config.HEALTH_PER_SECOND;
-        if (health < 0.0f) health = 0;
-
-        // Handle Tap
-        if (tapX >= 0.0f && buttons.size() > 0) {
-            Button b = buttons.removeFirst();
-            if (b.isHit(tapX, tapY) && b.scoreMultiplier(time) > 0) {
-                score += Config.BUTTON_VALUE * b.scoreMultiplier(time);
-                health += Config.HEALTH_PER_HIT;
-                if (health > 100.0f) health = 100.0f;
-            } else {
-                misses.add(new Miss(b.getInfo().time + Config.MISS_TEXT_DURATION, b.getInfo().x, b.getInfo().y));
-            }
-        }
-
-        // Handle Timeout
-        if (buttons.size() > 0 && buttons.peek().getInfo().time - time < -Config.MAX_TIME_FOR_HIT) {
-            Button b = buttons.removeFirst();
-            misses.add(new Miss(b.getInfo().time + Config.MISS_TEXT_DURATION, b.getInfo().x, b.getInfo().y));
-        }
-
-        // Remove old misses
-        if (misses.size() > 0 && misses.peek().getTime() <= time) {
-            misses.removeFirst();
-        }
-
-        // Draw buttons
-        for (Button b : buttons) {
-            b.draw(gl, time);
-        }
-
-        // Draw misses
-        for (Miss m : misses) {
-            m.draw(gl);
-        }
-
-        float left = 10;
-        String message = "Health: " + (int)health;
-        for (char c : message.toCharArray()) {
-            new Character(c, left, 10.0f).draw(gl);
-            left += 14.0f;
-        }
-
-
-        tapX = -1.0f;
-        tapY = -1.0f;
-        lastTime = time;
     }
 
     /*
@@ -161,7 +97,7 @@ public class OpenGLRenderer implements Renderer {
     }
 
     public void stop() {
-        player.stop();
+        game.stop();
         Button.unload();
         Character.unload();
         Miss.unload();
