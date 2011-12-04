@@ -24,10 +24,7 @@ public class Ouendroid extends Activity{
         view.setRenderer(renderer);
         setContentView(view);
 
-        // load music
-        // load notefile
-        // play music
-        // read notefile line by line
+
 
 
     }
