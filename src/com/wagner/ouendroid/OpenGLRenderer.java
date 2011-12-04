@@ -7,9 +7,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.opengl.GLU;
 import android.opengl.GLSurfaceView.Renderer;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -29,7 +31,7 @@ public class OpenGLRenderer implements Renderer {
     FileReader reader = new FileReader();
     private float tapX = -1.0f;
     private float tapY = -1.0f;
-    ArrayList<ButtonInfo> timesCoords = reader.getButtonInfoList("1000,52,52,0");
+    ArrayList<ButtonInfo> timesCoords = reader.getButtonInfoList("sdcard/airbrushed.txt");
     private Bitmap buttonTexture;
     private int score = 0;
     private int health = 100;
@@ -38,6 +40,15 @@ public class OpenGLRenderer implements Renderer {
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
         buttonTexture = BitmapFactory.decodeResource(context.getResources(), R.drawable.button, o);
+
+        Uri songUri = Uri.parse("file:///sdcard/A_Airbrushed.mp3");
+        try {
+            player.setDataSource(context,songUri);
+            player.prepare();
+            player.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /*
@@ -69,7 +80,7 @@ public class OpenGLRenderer implements Renderer {
           * microedition.khronos.opengles.GL10)
       */
 
-    int time = 0;
+    int time = player.getCurrentPosition();
     public void onDrawFrame(GL10 gl) {
         // Clears the screen and depth buffer.
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | // OpenGL docs.

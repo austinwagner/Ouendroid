@@ -34,7 +34,7 @@ public class FileReader {
         {
             final Scanner scanner;
 
-            scanner = new Scanner(file).useDelimiter("\n");
+            scanner = new Scanner(file).useDelimiter("\r\n");
 
             while(scanner.hasNext())
             {
