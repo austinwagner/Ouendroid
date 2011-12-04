@@ -16,10 +16,13 @@ import java.util.Scanner;
 public class FileReader {
 
     int time;
-    String xCoord;
-    String yCoord;
+    int xCoord;
+    int yCoord;
+    int comboChange;
     int color;
     int number = 1;
+    int hitSound;
+
     ArrayList<ButtonInfo> timesCoords = new ArrayList<ButtonInfo>();
 
     public FileReader() {
@@ -48,19 +51,25 @@ public class FileReader {
         }
         return timesCoords;
     }
+    // set up our scanner to use , as delimiter and parse all our data
     private void parseLine(String line) {
         Scanner scanner = new Scanner(line).useDelimiter(",");
+        xCoord = Integer.parseInt(scanner.next());
+        yCoord = Integer.parseInt(scanner.next());
         time   = Integer.parseInt(scanner.next());
-        xCoord = scanner.next();
-        yCoord = scanner.next();
-        color = Integer.parseInt(scanner.next());
-        if (timesCoords.size() != 0 && color == timesCoords.get(timesCoords.size() - 1).color) {
+        comboChange = Integer.parseInt(scanner.next());
+        hitSound = Integer.parseInt(scanner.next());
+
+        if (comboChange != 5 && number < 8)  // if there's no combo change, increment the number
             number++;
-        }
-        else {
+        else if (comboChange == 5) { // if we need to change combo, rotate the color and reset the number.
+            if (color < 2)
+                color++;
+            else
+                color = 0;
             number = 1;
         }
-        ButtonInfo button = new ButtonInfo(time, Integer.parseInt(xCoord), Integer.parseInt(yCoord), color, number);
+        ButtonInfo button = new ButtonInfo(time, xCoord, yCoord, color, number);
         timesCoords.add(button);
 
     }
