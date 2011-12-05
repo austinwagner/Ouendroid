@@ -40,5 +40,10 @@ public class Ouendroid extends Activity{
     public void onBackPressed() {
         view.onKeyDown(KeyEvent.KEYCODE_BACK, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return view.onKeyDown(keyCode, event);
+    }
 }
 

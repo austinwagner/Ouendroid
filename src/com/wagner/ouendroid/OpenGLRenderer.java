@@ -27,7 +27,7 @@ import java.util.LinkedList;
 public class OpenGLRenderer implements Renderer {
     private enum State { MENU, GAME }
     private State state = State.MENU;
-    private Game game = new Game(this);
+    private Game game;
     private Menu menu;
     private Context context;
 
@@ -113,12 +113,22 @@ public class OpenGLRenderer implements Renderer {
 
         if (state == State.MENU) {
             menu.draw(gl);
+            if (!keyHandled && keyEvent.getAction() == KeyEvent.ACTION_DOWN &&
+                    keyEvent.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+                parent.finish();
+                keyHandled = true;
+            }
         } else if (state == State.GAME) {
             game.draw(gl);
+            if (!keyHandled && keyEvent.getAction() == KeyEvent.ACTION_DOWN
+                    && keyEvent.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+                game.stop();
+                state = State.MENU;
+                keyHandled = true;
+            }
         }
 
-        if (!keyHandled && keyEvent.getKeyCode() == KeyEvent.KEYCODE_BACK)
-            parent.finish();
+
     }
 
     /*
@@ -140,6 +150,7 @@ public class OpenGLRenderer implements Renderer {
         this.height = height;
 
         menu = new Menu(this, context);
+        game = new Game(this, context);
     }
 
     public void startGame(String song, String chart) {

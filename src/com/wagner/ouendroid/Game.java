@@ -1,8 +1,10 @@
 package com.wagner.ouendroid;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -19,20 +21,26 @@ public class Game {
     private LinkedList<Button> buttons = new LinkedList<Button>();
     private LinkedList<Miss> misses = new LinkedList<Miss>();
     private int readerPos = 0;
-    private MediaPlayer player = new MediaPlayer();
+    private MediaPlayer player;
     FileReader reader = new FileReader();
     ArrayList<ButtonInfo> timesCoords;
     private int score = 0;
     private float health = 100.0f;
     private int lastTime;
     private OpenGLRenderer parent;
+    private FullScreenOverlay pauseScreen;
 
-    public Game(OpenGLRenderer parent) {
+    public Game(OpenGLRenderer parent, Context context) {
         this.parent = parent;
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inScaled = false;
+        pauseScreen = new FullScreenOverlay(BitmapFactory.decodeResource(context.getResources(), R.drawable.pause, o),
+                parent.getWidth(), parent.getHeight());
     }
 
     public void initialize(Context context, String songPath, String chartPath) {
         timesCoords = reader.getButtonInfoList(chartPath);
+        player = new MediaPlayer();
         Uri songUri = Uri.parse(songPath);
         try {
             player.setDataSource(context,songUri);
@@ -44,43 +52,52 @@ public class Game {
     }
 
     public void draw(GL10 gl) {
+        if (!parent.isKeyHandled() && parent.getKeyEvent().getAction() == KeyEvent.ACTION_DOWN &&
+                parent.getKeyEvent().getKeyCode() == KeyEvent.KEYCODE_MENU) {
+            player.pause();
+            parent.setKeyHandled();
+        }
+
         int time = player.getCurrentPosition();
 
-        // Load in buttons that will need to be displayed
-        while (readerPos < timesCoords.size()) {
-            ButtonInfo info = timesCoords.get(readerPos);
-            if (info.time - time < Config.RING_TIME) {
-                readerPos++;
-                buttons.addFirst(new Button(info));
-            } else {
-                break;
+        // If game is paused, only run render code
+        if (player.isPlaying()) {
+            // Load in buttons that will need to be displayed
+            while (readerPos < timesCoords.size()) {
+                ButtonInfo info = timesCoords.get(readerPos);
+                if (info.time - time < Config.RING_TIME) {
+                    readerPos++;
+                    buttons.addFirst(new Button(info));
+                } else {
+                    break;
+                }
             }
-        }
 
-        // Perform health decrement
-        health -= (time - lastTime) / 1000.0f * Config.HEALTH_PER_SECOND;
-        if (health < 0.0f) health = 0;
+            // Perform health decrement
+            health -= (time - lastTime) / 1000.0f * Config.HEALTH_PER_SECOND;
+            if (health < 0.0f) health = 0;
 
-        // Handle Tap
-        if (!parent.isTouchHandled() && parent.getTouchEvent().getAction() == MotionEvent.ACTION_DOWN && buttons.size() > 0) {
-            Button b = buttons.getLast();
-            if (b.isHit(parent.getTouchEvent().getX(), parent.getTouchEvent().getY()) && b.scoreMultiplier(time) > 0) {
-                buttons.removeLast();
-                score += Config.BUTTON_VALUE * b.scoreMultiplier(time);
-                health += Config.HEALTH_PER_HIT;
-                if (health > 100.0f) health = 100.0f;
+            // Handle Tap
+            if (!parent.isTouchHandled() && parent.getTouchEvent().getAction() == MotionEvent.ACTION_DOWN && buttons.size() > 0) {
+                Button b = buttons.getLast();
+                if (b.isHit(parent.getTouchEvent().getX(), parent.getTouchEvent().getY()) && b.scoreMultiplier(time) > 0) {
+                    buttons.removeLast();
+                    score += Config.BUTTON_VALUE * b.scoreMultiplier(time);
+                    health += Config.HEALTH_PER_HIT;
+                    if (health > 100.0f) health = 100.0f;
+                }
             }
-        }
 
-        // Handle Timeout
-        if (buttons.size() > 0 && buttons.getLast().getInfo().time - time < -Config.MAX_TIME_FOR_HIT) {
-            Button b = buttons.removeLast();
-            misses.add(new Miss(b.getInfo().time + Config.MISS_TEXT_DURATION, b.getInfo().x, b.getInfo().y));
-        }
+            // Handle Timeout
+            if (buttons.size() > 0 && buttons.getLast().getInfo().time - time < -Config.MAX_TIME_FOR_HIT) {
+                Button b = buttons.removeLast();
+                misses.add(new Miss(b.getInfo().time + Config.MISS_TEXT_DURATION, b.getInfo().x, b.getInfo().y));
+            }
 
-        // Remove old misses
-        if (misses.size() > 0 && misses.peek().getTime() <= time) {
-            misses.removeFirst();
+            // Remove old misses
+            if (misses.size() > 0 && misses.peek().getTime() <= time) {
+                misses.removeFirst();
+            }
         }
 
         // Draw buttons
@@ -99,6 +116,12 @@ public class Game {
                 setVerticalAlignment(Text.VertAlign.BOTTOM).draw(gl);
 
         lastTime = time;
+
+        if (!player.isPlaying()) {
+            pauseScreen.draw(gl);
+            if (!parent.isTouchHandled())
+                player.start();
+        }
 
         parent.setTouchHandled();
     }
