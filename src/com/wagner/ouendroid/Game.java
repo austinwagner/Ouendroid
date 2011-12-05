@@ -63,8 +63,9 @@ public class Game {
 
         // Handle Tap
         if (!parent.isTouchHandled() && parent.getTouchEvent().getAction() == MotionEvent.ACTION_DOWN && buttons.size() > 0) {
-            Button b = buttons.removeLast();
+            Button b = buttons.getLast();
             if (b.isHit(parent.getTouchEvent().getX(), parent.getTouchEvent().getY()) && b.scoreMultiplier(time) > 0) {
+                buttons.removeLast();
                 score += Config.BUTTON_VALUE * b.scoreMultiplier(time);
                 health += Config.HEALTH_PER_HIT;
                 if (health > 100.0f) health = 100.0f;
