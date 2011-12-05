@@ -16,8 +16,8 @@ import java.util.Scanner;
 public class FileReader {
 
     int time;
-    int xCoord;
-    int yCoord;
+    double xCoord;
+    double yCoord;
     int comboChange;
     int color;
     int number = 0;
@@ -26,6 +26,8 @@ public class FileReader {
     ArrayList<ButtonInfo> timesCoords = new ArrayList<ButtonInfo>();
 
     public FileReader() {
+
+
 
     }
     public ArrayList<ButtonInfo> getButtonInfoList(String inFileName) {
@@ -54,8 +56,8 @@ public class FileReader {
     // set up our scanner to use , as delimiter and parse all our data
     private void parseLine(String line) {
         Scanner scanner = new Scanner(line).useDelimiter(",");
-        xCoord = Integer.parseInt(scanner.next());
-        yCoord = Integer.parseInt(scanner.next());
+        xCoord = Double.parseDouble(scanner.next());
+        yCoord = Double.parseDouble(scanner.next());
         time   = Integer.parseInt(scanner.next());
         comboChange = Integer.parseInt(scanner.next());
         hitSound = Integer.parseInt(scanner.next());
@@ -69,7 +71,9 @@ public class FileReader {
                 color = 0;
             number = 1;
         }
-        ButtonInfo button = new ButtonInfo(time, xCoord, yCoord, color, number);
+        xCoord *= (280.0 / 512.0);
+        yCoord *= (510.0 / 384.0);
+        ButtonInfo button = new ButtonInfo(time, (int)xCoord, (int)yCoord, color, number);
         timesCoords.add(button);
 
     }
