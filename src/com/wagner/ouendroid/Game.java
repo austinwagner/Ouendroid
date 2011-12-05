@@ -51,7 +51,7 @@ public class Game {
             ButtonInfo info = timesCoords.get(readerPos);
             if (info.time - time < Config.RING_TIME) {
                 readerPos++;
-                buttons.add(new Button(info));
+                buttons.addFirst(new Button(info));
             } else {
                 break;
             }
@@ -63,19 +63,17 @@ public class Game {
 
         // Handle Tap
         if (!parent.isTouchHandled() && parent.getTouchEvent().getAction() == MotionEvent.ACTION_DOWN && buttons.size() > 0) {
-            Button b = buttons.removeFirst();
+            Button b = buttons.removeLast();
             if (b.isHit(parent.getTouchEvent().getX(), parent.getTouchEvent().getY()) && b.scoreMultiplier(time) > 0) {
                 score += Config.BUTTON_VALUE * b.scoreMultiplier(time);
                 health += Config.HEALTH_PER_HIT;
                 if (health > 100.0f) health = 100.0f;
-            } else {
-                misses.add(new Miss(b.getInfo().time + Config.MISS_TEXT_DURATION, b.getInfo().x, b.getInfo().y));
             }
         }
 
         // Handle Timeout
-        if (buttons.size() > 0 && buttons.peek().getInfo().time - time < -Config.MAX_TIME_FOR_HIT) {
-            Button b = buttons.removeFirst();
+        if (buttons.size() > 0 && buttons.getLast().getInfo().time - time < -Config.MAX_TIME_FOR_HIT) {
+            Button b = buttons.removeLast();
             misses.add(new Miss(b.getInfo().time + Config.MISS_TEXT_DURATION, b.getInfo().x, b.getInfo().y));
         }
 
