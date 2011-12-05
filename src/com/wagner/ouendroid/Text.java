@@ -16,6 +16,7 @@ public class Text {
     private float b = 1.0f;
     private HorAlign hor = HorAlign.LEFT;
     private VertAlign vert = VertAlign.TOP;
+    private float scale = 1.0f;
 
     public Text() {
 
@@ -51,6 +52,11 @@ public class Text {
         return this;
     }
 
+    public Text setScale(float s) {
+        scale = s;
+        return this;
+    }
+
     public Text setHorizontalAlignment(HorAlign align) {
         this.hor = align;
         return this;
@@ -75,20 +81,20 @@ public class Text {
         if (vert == VertAlign.TOP)
             top = y;
         else if (vert == VertAlign.MIDDLE)
-            top = y - 11.0f;
+            top = y - 11.0f * scale;
         else
-            top = y - 22.0f;
+            top = y - 22.0f * scale;
 
         if (hor == HorAlign.LEFT)
             left = x;
         else if (hor == HorAlign.CENTER)
-            left = x - 7.0f * text.length();
+            left = x - 7.0f * text.length() * scale;
         else
-            left = x - 14.0f * text.length();
+            left = x - 14.0f * text.length() * scale;
 
         for (char c : text.toCharArray()) {
-            new Character(c, left, top, r, g, b).draw(gl);
-            left += 14.0f;
+            new Character(c, left, top, r, g, b, scale).draw(gl);
+            left += 14.0f * scale;
         }
     }
 
@@ -98,17 +104,17 @@ public class Text {
         if (vert == VertAlign.TOP)
             top = y;
         else if (vert == VertAlign.MIDDLE)
-            top = y - 11.0f;
+            top = y - 11.0f * scale;
         else
-            top = y - 22.0f;
+            top = y - 22.0f * scale;
 
         if (hor == HorAlign.LEFT)
             left = x;
         else if (hor == HorAlign.CENTER)
-            left = x - 7.0f * text.length();
+            left = x - 7.0f * text.length() * scale;
         else
-            left = x - 14.0f * text.length();
+            left = x - 14.0f * text.length() * scale;
 
-        return (hitX > left && hitX < left + text.length() * 14.0f && hitY > top && hitY < top + 22.0f);
+        return (hitX > left && hitX < left + text.length() * 14.0f * scale && hitY > top && hitY < top + 22.0f * scale);
     }
 }

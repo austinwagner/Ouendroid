@@ -117,10 +117,10 @@ public class Menu {
                     files.add(f.getName());
                 }
                 Collections.sort(files);
-                float top = 2.0f;
+                float top = 3.0f;
                 for (String f : files) {
-                    fileText.add(new Text().setText(f.substring(0, f.length() - 4)).setX(2.0f).setY(top));
-                    top += 24.0f;
+                    fileText.add(new Text().setText(f.substring(0, f.length() - 4)).setX(2.0f).setY(top).setScale(1.5f));
+                    top += 36f;
                 }
 
                 state = State.FILES;
@@ -157,6 +157,7 @@ public class Menu {
                 parent.startGame("file:///sdcard/" + chosen.substring(0, chosen.length() - 3) + "mp3",
                         "/sdcard/" + chosen);
                 state = State.MAIN;
+                selected = -1;
             } else if (!parent.isTouchHandled() && parent.getTouchEvent().getAction() == MotionEvent.ACTION_UP) {
                 selected = -1;
             }

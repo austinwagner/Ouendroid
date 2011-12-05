@@ -24,12 +24,7 @@ public class Character {
     private char ascii;
     private float x, y, r, g, b;
 
-	private float vertices[] = {
-		        0.0f,   0.0f, 0.0f,  // 0, Top Left
-		        0.0f, 22.0f, 0.0f,  // 1, Bottom Left
-		      14.0f, 22.0f, 0.0f,  // 2, Bottom Right
-		      14.0f,   0.0f, 0.0f,  // 3, Top Right
-	};
+
 
 	private short[] indices = { 0, 1, 2, 0, 2, 3 };
 
@@ -42,8 +37,14 @@ public class Character {
         loadTexture = true;
     }
 
-	public Character(char ascii, float x, float y, float r, float g, float b) {
-		ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
+    public Character(char ascii, float x, float y, float r, float g, float b, float scale) {
+        float vertices[] = {
+		               0.0f,          0.0f, 0.0f,  // 0, Top Left
+		               0.0f, 22.0f * scale, 0.0f,  // 1, Bottom Left
+		      14.0f * scale, 22.0f * scale, 0.0f,  // 2, Bottom Right
+		      14.0f * scale,          0.0f, 0.0f,  // 3, Top Right
+	    };
+        ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
 		vbb.order(ByteOrder.nativeOrder());
 		vertexBuffer = vbb.asFloatBuffer();
 		vertexBuffer.put(vertices);
@@ -64,6 +65,13 @@ public class Character {
         this.r = r;
         this.b = b;
         this.g = g;
+    }
+	public Character(char ascii, float x, float y, float r, float g, float b) {
+        this(ascii, x, y, r, g, b, 1.0f);
+    }
+
+    private void init() {
+
     }
 
 	/**
