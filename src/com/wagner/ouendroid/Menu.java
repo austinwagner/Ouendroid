@@ -151,7 +151,7 @@ public class Menu {
                 t.draw(gl);
             }
 
-            if (!parent.isTouchHandled() && parent.getTouchEvent().getAction() == MotionEvent.ACTION_UP &&
+            if (selected != -1 && !parent.isTouchHandled() && parent.getTouchEvent().getAction() == MotionEvent.ACTION_UP &&
                     fileText.get(selected).isHit(parent.getTouchEvent().getX(), parent.getTouchEvent().getY())) {
                 String chosen = files.get(selected);
                 parent.startGame("file:///sdcard/" + chosen.substring(0, chosen.length() - 3) + "mp3",

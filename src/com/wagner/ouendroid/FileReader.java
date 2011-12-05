@@ -62,6 +62,11 @@ public class FileReader {
         comboChange = Integer.parseInt(scanner.next());
         hitSound = Integer.parseInt(scanner.next());
 
+        if (comboChange != 1 && comboChange != 5) {
+            scanner.useDelimiter("\n");
+            scanner.next();
+            return;
+        }
         if (comboChange != 5 && number < 8)  // if there's no combo change, increment the number
             number++;
         else if (comboChange == 5) { // if we need to change combo, rotate the color and reset the number.
