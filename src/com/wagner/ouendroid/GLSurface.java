@@ -6,8 +6,6 @@ import android.opengl.GLSurfaceView;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
-import java.security.Key;
-
 /**
  * User: Austin Wagner
  * Date: 12/4/11
@@ -32,7 +30,7 @@ public class GLSurface extends GLSurfaceView {
     public void stop() {
         queueEvent(new Runnable() {
             public void run() {
-                renderer.stop();
+                renderer.unload();
             }
         });
     }

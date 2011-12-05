@@ -66,12 +66,9 @@ public class Character {
         this.b = b;
         this.g = g;
     }
+
 	public Character(char ascii, float x, float y, float r, float g, float b) {
         this(ascii, x, y, r, g, b, 1.0f);
-    }
-
-    private void init() {
-
     }
 
 	/**
@@ -131,9 +128,9 @@ public class Character {
         textureId = textures[0];
         gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
         gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER,
-			    GL10.GL_LINEAR);
+			    GL10.GL_NEAREST);
         gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER,
-                GL10.GL_LINEAR);
+                GL10.GL_NEAREST);
 
         gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S,
                 GL10.GL_CLAMP_TO_EDGE);

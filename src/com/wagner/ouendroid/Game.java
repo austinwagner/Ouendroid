@@ -29,21 +29,31 @@ public class Game {
     private int lastTime;
     private OpenGLRenderer parent;
     private FullScreenOverlay pauseScreen;
+    private FullScreenOverlay background;
+    private Text scoreText;
+    private Text healthText;
 
     public Game(OpenGLRenderer parent, Context context) {
         this.parent = parent;
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
         pauseScreen = new FullScreenOverlay(BitmapFactory.decodeResource(context.getResources(), R.drawable.pause, o),
-                parent.getWidth(), parent.getHeight());
+                parent.getWidth(), parent.getHeight(), true);
+        background = new FullScreenOverlay(BitmapFactory.decodeResource(context.getResources(), R.drawable.menu, o),
+                parent.getWidth(), parent.getHeight(), false);
         reader = new FileReader(parent.getWidth(), parent.getHeight());
+        scoreText = new Text().setHorizontalAlignment(Text.HorAlign.RIGHT).setVerticalAlignment(Text.VertAlign.BOTTOM)
+                .setX(parent.getWidth() - 2.0f).setY(parent.getHeight() - 2.0f);
+        healthText = new Text().setHorizontalAlignment(Text.HorAlign.LEFT).setVerticalAlignment(Text.VertAlign.BOTTOM)
+                .setX(2.0f).setY(parent.getHeight() - 2.0f);
+
     }
 
     public void initialize(Context context, String songPath, String chartPath) {
         readerPos = 0;
         score = 0;
         health = 100.0f;
-        lastTime = -10000;
+        lastTime = 0;
         timesCoords = reader.getButtonInfoList(chartPath);
         player = new MediaPlayer();
         Uri songUri = Uri.parse(songPath);
@@ -105,6 +115,8 @@ public class Game {
             }
         }
 
+        background.draw(gl);
+
         // Draw buttons
         for (Button b : buttons) {
             b.draw(gl, time);
@@ -115,10 +127,8 @@ public class Game {
             m.draw(gl);
         }
 
-        //new Text().setText("Health: " + (int)health).setX(10).setY(10).draw(gl);
-        new Text().setText(String.valueOf(time)).setX(10).setY(10).draw(gl);
-        new Text().setText("Score: " + score).setX(300).setY(400).setHorizontalAlignment(Text.HorAlign.RIGHT).
-                setVerticalAlignment(Text.VertAlign.BOTTOM).draw(gl);
+        healthText.setText("Health: " + (int)health).draw(gl);
+        scoreText.setText("Score: " + score).draw(gl);
 
         lastTime = time;
 
@@ -133,6 +143,10 @@ public class Game {
 
     public void stop() {
         player.stop();
+    }
+
+    public void unload() {
+        pauseScreen.unload();
     }
 
 

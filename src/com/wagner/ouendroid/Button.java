@@ -61,10 +61,7 @@ public class Button {
     }
 
     public boolean isHit(float tapX, float tapY) {
-        if((tapX - info.x)*(tapX - info.x) + (tapY - info.y)*(tapY - info.y) < 32 * 32)
-            return true;
-        else
-            return false;
+        return (tapX - info.x) * (tapX - info.x) + (tapY - info.y) * (tapY - info.y) < Config.HIT_RADIUS * Config.HIT_RADIUS;
     }
 
     public ButtonInfo getInfo() {

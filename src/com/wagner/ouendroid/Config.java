@@ -18,6 +18,7 @@ public class Config {
 
     public static final float RING_RADIUS = 75.0f;
     public static final float BUTTON_SIZE = 64.0f;
+    public static final float HIT_RADIUS = 40.0f;
 
     public static final int MISS_TEXT_DURATION = 1200;
 }

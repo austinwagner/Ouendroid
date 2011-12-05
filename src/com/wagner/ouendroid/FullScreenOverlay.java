@@ -20,12 +20,13 @@ public class FullScreenOverlay {
     private Bitmap bitmap;
     private float vertices[];
 	private short[] indices = { 0, 1, 2, 0, 2, 3 };
+    private boolean transparent;
 
     private FloatBuffer vertexBuffer;
 	private ShortBuffer indexBuffer;
     private FloatBuffer textureBuffer;
 
-    public FullScreenOverlay(Bitmap bitmap, int width, int height) {
+    public FullScreenOverlay(Bitmap bitmap, int width, int height, boolean transparent) {
         vertices = new float[] {
 		      0.0f,   0.0f, 0.0f, // 0, Top Left
 		      0.0f, height, 0.0f, // 1, Bottom Left
@@ -59,6 +60,7 @@ public class FullScreenOverlay {
 		textureBuffer.position(0);
 
         this.bitmap = bitmap;
+        this.transparent = transparent;
     }
 
     public void draw(GL10 gl) {
@@ -71,9 +73,11 @@ public class FullScreenOverlay {
 
         gl.glEnable(GL10.GL_TEXTURE_2D);
 		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-        gl.glDepthMask(false);
-        gl.glEnable(GL10.GL_BLEND);
-        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        if (transparent) {
+            gl.glDepthMask(false);
+            gl.glEnable(GL10.GL_BLEND);
+            gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        }
 
 		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, textureBuffer);
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
@@ -86,9 +90,10 @@ public class FullScreenOverlay {
 
         gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
         gl.glDisable(GL10.GL_TEXTURE_2D);
-        gl.glDisable(GL10.GL_TEXTURE_2D);
-        gl.glDisable(GL10.GL_BLEND);
-        gl.glDepthMask(true);
+        if (transparent) {
+            gl.glDisable(GL10.GL_BLEND);
+            gl.glDepthMask(true);
+        }
     }
 
     private void loadGLTexture(GL10 gl) {

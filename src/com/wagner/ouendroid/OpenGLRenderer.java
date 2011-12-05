@@ -157,8 +157,9 @@ public class OpenGLRenderer implements Renderer {
         game.initialize(context, song, chart);
         state = State.GAME;
     }
-    public void stop() {
+    public void unload() {
         game.stop();
+        game.unload();
         Button.unload();
         Character.unload();
         Miss.unload();
