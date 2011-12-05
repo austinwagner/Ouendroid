@@ -6,11 +6,11 @@ package com.wagner.ouendroid;
  * Time: 2:58 PM
  */
 public class ButtonInfo {
-    int time;
-    int x;
-    int y;
-    int color;
-    int number;
+    public int time;
+    public int x;
+    public int y;
+    public int color;
+    public int number;
     public ButtonInfo(int inTime, int xCoord, int yCoord, int inColor, int inNum) {
         time = inTime;
         color = inColor;

@@ -20,12 +20,12 @@ import java.util.LinkedList;
 public class Game {
     private LinkedList<Button> buttons = new LinkedList<Button>();
     private LinkedList<Miss> misses = new LinkedList<Miss>();
-    private int readerPos = 0;
+    private int readerPos;
     private MediaPlayer player;
-    FileReader reader = new FileReader();
+    FileReader reader;
     ArrayList<ButtonInfo> timesCoords;
-    private int score = 0;
-    private float health = 100.0f;
+    private int score;
+    private float health;
     private int lastTime;
     private OpenGLRenderer parent;
     private FullScreenOverlay pauseScreen;
@@ -36,9 +36,14 @@ public class Game {
         o.inScaled = false;
         pauseScreen = new FullScreenOverlay(BitmapFactory.decodeResource(context.getResources(), R.drawable.pause, o),
                 parent.getWidth(), parent.getHeight());
+        reader = new FileReader(parent.getWidth(), parent.getHeight());
     }
 
     public void initialize(Context context, String songPath, String chartPath) {
+        readerPos = 0;
+        score = 0;
+        health = 100.0f;
+        lastTime = -10000;
         timesCoords = reader.getButtonInfoList(chartPath);
         player = new MediaPlayer();
         Uri songUri = Uri.parse(songPath);

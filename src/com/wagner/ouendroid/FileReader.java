@@ -13,36 +13,32 @@ import java.util.Scanner;
 
 public class FileReader {
 
-    int time;
-    double xCoord;
-    double yCoord;
-    int comboChange;
-    int color;
-    int number = 0;
-    int hitSound;
+    private int color;
+    private int number;
+    private int screenWidth, screenHeight;
 
-    ArrayList<ButtonInfo> timesCoords = new ArrayList<ButtonInfo>();
-
-    public FileReader() {
-
-
-
+    public FileReader(int screenWidth, int screenHeight) {
+        this.screenHeight = screenHeight;
+        this.screenWidth = screenWidth;
     }
+
     public ArrayList<ButtonInfo> getButtonInfoList(String inFileName) {
-
-        final File file;
-
-        file = new File(inFileName);
+        color = 0;
+        number = 0;
+        ArrayList<ButtonInfo> timesCoords = new ArrayList<ButtonInfo>();
 
         try
         {
+            final File file = new File(inFileName);
             final Scanner scanner;
 
             scanner = new Scanner(file).useDelimiter("\r\n");
 
             while(scanner.hasNext())
             {
-                parseLine(scanner.next());
+                ButtonInfo b = parseLine(scanner.next());
+                if (b != null)
+                    timesCoords.add(b);
             }
         }
         catch(final FileNotFoundException ex)
@@ -52,18 +48,18 @@ public class FileReader {
         return timesCoords;
     }
     // set up our scanner to use , as delimiter and parse all our data
-    private void parseLine(String line) {
+    private ButtonInfo parseLine(String line) {
         Scanner scanner = new Scanner(line).useDelimiter(",");
-        xCoord = Double.parseDouble(scanner.next());
-        yCoord = Double.parseDouble(scanner.next());
-        time   = Integer.parseInt(scanner.next());
-        comboChange = Integer.parseInt(scanner.next());
-        hitSound = Integer.parseInt(scanner.next());
+        double xCoord = Double.parseDouble(scanner.next());
+        double yCoord = Double.parseDouble(scanner.next());
+        int time   = Integer.parseInt(scanner.next());
+        int comboChange = Integer.parseInt(scanner.next());
+        int hitSound = Integer.parseInt(scanner.next());
 
         if (comboChange != 1 && comboChange != 5) {
             scanner.useDelimiter("\n");
             scanner.next();
-            return;
+            return null;
         }
         if (comboChange != 5 && number < 8)  // if there's no combo change, increment the number
             number++;
@@ -74,11 +70,9 @@ public class FileReader {
                 color = 0;
             number = 1;
         }
-        xCoord *= (280.0 / 512.0);
-        yCoord *= (510.0 / 384.0);
-        ButtonInfo button = new ButtonInfo(time, (int)xCoord, (int)yCoord, color, number);
-        timesCoords.add(button);
-
+        xCoord *= (screenWidth / 512.0);
+        yCoord *= (screenHeight / 384.0);
+        return new ButtonInfo(time, (int)xCoord, (int)yCoord, color, number);
     }
 
 }
