@@ -3,6 +3,7 @@ package com.wagner.ouendroid;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.*;
 import android.media.MediaPlayer;
@@ -10,6 +11,9 @@ import android.net.Uri;
 import android.opengl.GLU;
 import android.opengl.GLSurfaceView.Renderer;
 import android.text.TextPaint;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import org.apache.commons.logging.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,19 +28,25 @@ public class OpenGLRenderer implements Renderer {
     private enum State { MENU, GAME }
     private State state = State.MENU;
     private Game game = new Game(this);
-    private Menu menu = new Menu(this);
+    private Menu menu;
     private Context context;
 
-    private float tapX = -1.0f;
-    private float tapY = -1.0f;
+    private int width, height;
+    private boolean keyHandled = true;
+    private boolean touchHandled = true;
+    private int keyCode;
+    private KeyEvent keyEvent;
+    private MotionEvent touchEvent;
+    private Activity parent;
 
-    public OpenGLRenderer(Context context) {
+    public OpenGLRenderer(Context context, Activity parent) {
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
         Button.initialize(BitmapFactory.decodeResource(context.getResources(), R.drawable.buttons, o));
         Character.initialize(BitmapFactory.decodeResource(context.getResources(), R.drawable.characters, o));
         Miss.initialize(BitmapFactory.decodeResource(context.getResources(), R.drawable.miss, o));
         this.context = context;
+        this.parent = parent;
     }
 
     /*
@@ -55,9 +65,39 @@ public class OpenGLRenderer implements Renderer {
         gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
     }
 
-    public void setTap(float x, float y) {
-        tapX = x;
-        tapY = y;
+    public void handleTouch(MotionEvent event) {
+        touchEvent = event;
+        touchHandled = false;
+    }
+
+    public void handleKey(int code, KeyEvent event) {
+        keyCode = code;
+        keyEvent = event;
+        keyHandled = false;
+    }
+
+    public MotionEvent getTouchEvent() {
+        return touchEvent;
+    }
+
+    public boolean isTouchHandled() {
+        return touchHandled;
+    }
+
+    public KeyEvent getKeyEvent() {
+        return keyEvent;
+    }
+
+    public boolean isKeyHandled() {
+        return keyHandled;
+    }
+
+    public void setKeyHandled() {
+        keyHandled = true;
+    }
+
+    public void setTouchHandled() {
+        touchHandled = true;
     }
 
     /*
@@ -72,13 +112,13 @@ public class OpenGLRenderer implements Renderer {
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
         if (state == State.MENU) {
-            menu.draw(gl, tapX, tapY);
+            menu.draw(gl);
         } else if (state == State.GAME) {
-            game.draw(gl, tapX, tapY);
+            game.draw(gl);
         }
 
-        tapX = -1.0f;
-        tapY = -1.0f;
+        if (!keyHandled && keyEvent.getKeyCode() == KeyEvent.KEYCODE_BACK)
+            parent.finish();
     }
 
     /*
@@ -95,6 +135,11 @@ public class OpenGLRenderer implements Renderer {
         GLU.gluOrtho2D(gl, 0, width, height, 0);
         gl.glMatrixMode(GL10.GL_MODELVIEW);
         gl.glLoadIdentity();
+
+        this.width = width;
+        this.height = height;
+
+        menu = new Menu(this, context);
     }
 
     public void startGame(String song, String chart) {
@@ -106,5 +151,14 @@ public class OpenGLRenderer implements Renderer {
         Button.unload();
         Character.unload();
         Miss.unload();
+        menu.unload();
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
     }
 }

@@ -138,7 +138,6 @@ public class Character {
     public static void unload() {
         bitmap.recycle();
         bitmap = null;
-        loadTexture = true;
     }
 
 }

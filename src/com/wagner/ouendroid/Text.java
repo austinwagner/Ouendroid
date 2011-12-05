@@ -91,4 +91,24 @@ public class Text {
             left += 14.0f;
         }
     }
+
+    public boolean isHit(float hitX, float hitY) {
+        float top, left;
+
+        if (vert == VertAlign.TOP)
+            top = y;
+        else if (vert == VertAlign.MIDDLE)
+            top = y - 11.0f;
+        else
+            top = y - 22.0f;
+
+        if (hor == HorAlign.LEFT)
+            left = x;
+        else if (hor == HorAlign.CENTER)
+            left = x - 7.0f * text.length();
+        else
+            left = x - 14.0f * text.length();
+
+        return (hitX > left && hitX < left + text.length() * 14.0f && hitY > top && hitY < top + 22.0f);
+    }
 }

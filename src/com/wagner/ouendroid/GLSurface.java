@@ -1,10 +1,12 @@
 package com.wagner.ouendroid;
 
+import android.app.Activity;
 import android.content.Context;
-import android.graphics.Rect;
 import android.opengl.GLSurfaceView;
-import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
+
+import java.security.Key;
 
 /**
  * User: Austin Wagner
@@ -22,8 +24,8 @@ public class GLSurface extends GLSurfaceView {
         this.context = context;
     }
 
-    public void start() {
-        renderer = new OpenGLRenderer(context);
+    public void start(Activity parent) {
+        renderer = new OpenGLRenderer(context, parent);
         setRenderer(renderer);
     }
 
@@ -37,22 +39,43 @@ public class GLSurface extends GLSurfaceView {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            queueEvent(new TapRunnable(event.getX(), event.getY()));
-            return true;
-        }
-        return super.onTouchEvent(event);
+        queueEvent(new TouchRunnable(event));
+        return true;
     }
 
-    private class TapRunnable implements Runnable {
-        private float x, y;
-        public TapRunnable(float x, float y) {
-            this.x = x;
-            this.y = y;
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        queueEvent(new KeyRunnable(keyCode, event));
+        return true;
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        queueEvent(new KeyRunnable(keyCode, event));
+        return true;
+    }
+
+    private class TouchRunnable implements Runnable {
+        private MotionEvent motionEvent;
+        public TouchRunnable(MotionEvent event) {
+            motionEvent = event;
         }
 
         public void run() {
-            renderer.setTap(x, y);
+            renderer.handleTouch(motionEvent);
+        }
+    }
+
+    private class KeyRunnable implements Runnable {
+        private KeyEvent keyEvent;
+        private int keyCode;
+        public KeyRunnable(int code, KeyEvent event) {
+            keyEvent = event;
+            keyCode = code;
+        }
+
+        public void run() {
+            renderer.handleKey(keyCode, keyEvent);
         }
     }
 }

@@ -3,6 +3,7 @@ package com.wagner.ouendroid;
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
@@ -26,13 +27,18 @@ public class Ouendroid extends Activity{
     @Override
     protected void onResume() {
         super.onResume();
-        view.start();
+        view.start(this);
     }
 
     @Override
     protected void onPause() {
         view.stop();
         super.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        view.onKeyDown(KeyEvent.KEYCODE_BACK, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
     }
 }
 

@@ -3,6 +3,7 @@ package com.wagner.ouendroid;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.view.MotionEvent;
 
 import javax.microedition.khronos.opengles.GL10;
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class Game {
         }
     }
 
-    public void draw(GL10 gl, float tapX, float tapY) {
+    public void draw(GL10 gl) {
         int time = player.getCurrentPosition();
 
         // Load in buttons that will need to be displayed
@@ -61,9 +62,9 @@ public class Game {
         if (health < 0.0f) health = 0;
 
         // Handle Tap
-        if (tapX >= 0.0f && buttons.size() > 0) {
+        if (!parent.isTouchHandled() && parent.getTouchEvent().getAction() == MotionEvent.ACTION_DOWN && buttons.size() > 0) {
             Button b = buttons.removeFirst();
-            if (b.isHit(tapX, tapY) && b.scoreMultiplier(time) > 0) {
+            if (b.isHit(parent.getTouchEvent().getX(), parent.getTouchEvent().getY()) && b.scoreMultiplier(time) > 0) {
                 score += Config.BUTTON_VALUE * b.scoreMultiplier(time);
                 health += Config.HEALTH_PER_HIT;
                 if (health > 100.0f) health = 100.0f;
@@ -99,6 +100,8 @@ public class Game {
                 setVerticalAlignment(Text.VertAlign.BOTTOM).draw(gl);
 
         lastTime = time;
+
+        parent.setTouchHandled();
     }
 
     public void stop() {

@@ -133,7 +133,6 @@ public class Miss {
     public static void unload() {
         bitmap.recycle();
         bitmap = null;
-        loadTexture = true;
     }
 
 }
