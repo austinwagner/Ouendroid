@@ -142,23 +142,30 @@ public class Game {
 
         lastTime = time;
 
-        healthText.setText("Health: " + (int)health).draw(gl);
-        scoreText.setText("Score: " + score).draw(gl);
-
         if (!player.isPlaying() && !gameOver && time < player.getDuration() - 100) {
+            healthText.setText("Health: " + (int)health).draw(gl);
+            scoreText.setText("Score: " + score).draw(gl);
             dimScreen.draw(gl);
             pauseScreen.draw(gl);
             if (!parent.isTouchHandled())
                 player.start();
+
         } else if (!player.isPlaying() && health > 0.0f) {
             gameOver = true;
             dimScreen.draw(gl);
             successText.draw(gl);
+            healthText.setText("Health: " + (int)health).draw(gl);
+            scoreText.setText("Score: " + score).draw(gl);
         } else if (health <= 0.0f) {
             gameOver = true;
             player.stop();
             dimScreen.draw(gl);
             failureText.draw(gl);
+            healthText.setText("Health: " + (int)health).draw(gl);
+            scoreText.setText("Score: " + score).draw(gl);
+        } else {
+            healthText.setText("Health: " + (int)health).draw(gl);
+            scoreText.setText("Score: " + score).draw(gl);
         }
 
         parent.setTouchHandled();
