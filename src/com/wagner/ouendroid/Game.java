@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.Uri;
+
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
@@ -20,8 +21,8 @@ import static com.wagner.ouendroid.Config.*;
  * Time: 3:57 PM
  */
 public class Game {
-    private LinkedList<Button> buttons = new LinkedList<Button>();
-    private LinkedList<Miss> misses = new LinkedList<Miss>();
+    private LinkedList<Button> buttons;
+    private LinkedList<Miss> misses;
     private int readerPos;
     private MediaPlayer player;
     private FileReader reader;
@@ -73,6 +74,8 @@ public class Game {
      * @param chartPath The file path to the note chart (e.g. /sdcard/song.oed)
      */
     public void initialize(String songPath, String chartPath) {
+        buttons = new LinkedList<Button>();
+        misses = new LinkedList<Miss>();
         readerPos = 0;
         score = 0;
         health = 100.0f;

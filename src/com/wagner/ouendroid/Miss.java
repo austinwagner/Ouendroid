@@ -9,6 +9,8 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
+import static javax.microedition.khronos.opengles.GL10.*;
+
 /**
  * User: Austin Wagner
  * Date: 12/4/11
@@ -94,26 +96,26 @@ public class Miss {
         gl.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         gl.glTranslatef(x, y, 0.0f);
 
-        gl.glEnable(GL10.GL_TEXTURE_2D);
-        gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+        gl.glEnable(GL_TEXTURE_2D);
+        gl.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-        gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, textureBuffer);
-        gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
+        gl.glTexCoordPointer(2, GL_FLOAT, 0, textureBuffer);
+        gl.glBindTexture(GL_TEXTURE_2D, textureId);
 
 
         gl.glDepthMask(false);
-        gl.glEnable(GL10.GL_BLEND);
-        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        gl.glEnable(GL_BLEND);
+        gl.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
+        gl.glEnableClientState(GL_VERTEX_ARRAY);
+        gl.glVertexPointer(3, GL_FLOAT, 0, vertexBuffer);
 
-        gl.glDrawElements(GL10.GL_TRIANGLES, indices.length, GL10.GL_UNSIGNED_SHORT, indexBuffer);
-        gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+        gl.glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_SHORT, indexBuffer);
+        gl.glDisableClientState(GL_VERTEX_ARRAY);
 
-        gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-        gl.glDisable(GL10.GL_TEXTURE_2D);
-        gl.glDisable(GL10.GL_BLEND);
+        gl.glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        gl.glDisable(GL_TEXTURE_2D);
+        gl.glDisable(GL_BLEND);
         gl.glDepthMask(true);
         gl.glPopMatrix();
     }
@@ -134,18 +136,18 @@ public class Miss {
         int[] textures = new int[1];
         gl.glGenTextures(1, textures, 0);
         textureId = textures[0];
-        gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER,
-                GL10.GL_LINEAR);
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER,
-                GL10.GL_LINEAR);
+        gl.glBindTexture(GL_TEXTURE_2D, textureId);
+        gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                GL_LINEAR);
+        gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+                GL_LINEAR);
 
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S,
-                GL10.GL_CLAMP_TO_EDGE);
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T,
-                GL10.GL_CLAMP_TO_EDGE);
+        gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
+                GL_CLAMP_TO_EDGE);
+        gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
+                GL_CLAMP_TO_EDGE);
 
-        GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
+        GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap, 0);
     }
 
     /**
