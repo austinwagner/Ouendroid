@@ -14,7 +14,7 @@ import java.nio.ShortBuffer;
  * Date: 12/5/11
  * Time: 12:17 AM
  */
-public class FullScreenOverlay {
+public class FullScreenImage {
     private int textureId;
     private boolean loadTexture = true;
     private Bitmap bitmap;
@@ -26,7 +26,7 @@ public class FullScreenOverlay {
 	private ShortBuffer indexBuffer;
     private FloatBuffer textureBuffer;
 
-    public FullScreenOverlay(Bitmap bitmap, int width, int height, boolean transparent) {
+    public FullScreenImage(Bitmap bitmap, int width, int height, boolean transparent) {
         vertices = new float[] {
 		      0.0f,   0.0f, 0.0f, // 0, Top Left
 		      0.0f, height, 0.0f, // 1, Bottom Left

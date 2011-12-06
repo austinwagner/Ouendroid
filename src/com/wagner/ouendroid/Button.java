@@ -11,6 +11,8 @@ import javax.microedition.khronos.opengles.GL10;
 import android.opengl.GLUtils;
 import android.util.Log;
 
+import static com.wagner.ouendroid.Config.*;
+
 /**
  * User: Austin Wagner
  * Date: 12/3/11
@@ -19,7 +21,6 @@ import android.util.Log;
 
 public class Button {
     private static final int SEGMENTS = 40;
-    private static final float BUTTON_SIZE = Config.BUTTON_SIZE; // Just to make the vertices definition cleaner
 
     private static Bitmap bitmap;
     private static int textureId;
@@ -61,7 +62,7 @@ public class Button {
     }
 
     public boolean isHit(float tapX, float tapY) {
-        return (tapX - info.x) * (tapX - info.x) + (tapY - info.y) * (tapY - info.y) < Config.HIT_RADIUS * Config.HIT_RADIUS;
+        return (tapX - info.x) * (tapX - info.x) + (tapY - info.y) * (tapY - info.y) < HIT_RADIUS * HIT_RADIUS;
     }
 
     public ButtonInfo getInfo() {
@@ -126,9 +127,9 @@ public class Button {
         float radius;
 
         if (delta > 0) {
-            radius = (delta / Config.RING_TIME * Config.RING_RADIUS + BUTTON_SIZE / 2);
+            radius = (delta / RING_TIME * RING_RADIUS + BUTTON_SIZE / 2);
         } else {
-            radius = (1-(-delta / Config.MAX_TIME_FOR_HIT)) * (BUTTON_SIZE / 4) + (BUTTON_SIZE / 4);
+            radius = (1-(-delta / MAX_TIME_FOR_HIT)) * (BUTTON_SIZE / 4) + (BUTTON_SIZE / 4);
         }
 
         gl.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
@@ -158,10 +159,10 @@ public class Button {
 
     public float scoreMultiplier(int time) {
         float delta = Math.abs(time - info.time);
-        if (delta > Config.MAX_TIME_FOR_HIT)
+        if (delta > MAX_TIME_FOR_HIT)
             return 0.0f;
         else
-            return 1.0f - (delta / Config.MAX_TIME_FOR_HIT);
+            return 1.0f - (delta / MAX_TIME_FOR_HIT);
     }
 
     private float degreesToRadian(float angle) {

@@ -122,13 +122,17 @@ public class OpenGLRenderer implements Renderer {
             game.draw(gl);
             if (!keyHandled && keyEvent.getAction() == KeyEvent.ACTION_DOWN
                     && keyEvent.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-                game.stop();
-                state = State.MENU;
+                returnToMenu();
                 keyHandled = true;
             }
         }
 
 
+    }
+
+    public void returnToMenu() {
+        game.stop();
+        state = State.MENU;
     }
 
     /*

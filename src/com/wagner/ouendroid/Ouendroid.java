@@ -43,6 +43,8 @@ public class Ouendroid extends Activity{
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)
+            return false;
         return view.onKeyDown(keyCode, event);
     }
 }

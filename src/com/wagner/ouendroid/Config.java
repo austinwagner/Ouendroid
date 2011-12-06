@@ -13,7 +13,7 @@ public class Config {
     public static final int HEALTH_PER_MISS = 20;
     public static final int HEALTH_PER_HIT = 5;
 
-    public static final int HEALTH_PER_SECOND = 5;
+    public static final int HEALTH_PER_SECOND = 10;
 
 
     public static final float RING_RADIUS = 75.0f;
