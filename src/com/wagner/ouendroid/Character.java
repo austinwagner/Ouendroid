@@ -10,9 +10,7 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 /**
- * User: Austin Wagner
- * Date: 12/3/11
- * Time: 11:16 AM
+ * Displays characters on the screen from the set of printing ASCII characters.
  */
 
 public class Character {
@@ -38,7 +36,6 @@ public class Character {
     }
 
     /**
-     * This class displays characters on the screen from the set of printing ASCII characters.
      * @param ascii The ASCII character code of the character to print.
      * @param x The horizontal postion of the left.
      * @param y The vertical position of the top.

@@ -7,9 +7,8 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 /**
- * User: Austin Wagner
- * Date: 12/4/11
- * Time: 11:03 AM
+ * The surface that holds the {@link OpenGLRenderer OpenGLRenderer}. Passes touch and keypress actions down to the
+ * renderer.
  */
 
 public class GLSurface extends GLSurfaceView {
@@ -43,13 +42,13 @@ public class GLSurface extends GLSurfaceView {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        queueEvent(new KeyRunnable(keyCode, event));
+        queueEvent(new KeyRunnable(event));
         return true;
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        queueEvent(new KeyRunnable(keyCode, event));
+        queueEvent(new KeyRunnable(event));
         return true;
     }
 
@@ -66,14 +65,12 @@ public class GLSurface extends GLSurfaceView {
 
     private class KeyRunnable implements Runnable {
         private KeyEvent keyEvent;
-        private int keyCode;
-        public KeyRunnable(int code, KeyEvent event) {
+        public KeyRunnable(KeyEvent event) {
             keyEvent = event;
-            keyCode = code;
         }
 
         public void run() {
-            renderer.handleKey(keyCode, keyEvent);
+            renderer.handleKey(keyEvent);
         }
     }
 }

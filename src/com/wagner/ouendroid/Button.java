@@ -13,9 +13,8 @@ import android.opengl.GLUtils;
 import static com.wagner.ouendroid.Config.*;
 
 /**
- * User: Austin Wagner
- * Date: 12/3/11
- * Time: 11:16 AM
+ * Displays a button and timing ring on the screen as defined by a {@link ButtonInfo ButtonInfo}.
+ * Determines how large the timing ring should be based off of the song progression and the ButtonInfo.
  */
 
 public class Button {
@@ -49,8 +48,6 @@ public class Button {
     }
 
     /**
-     * This class displays a button and timing ring on the screen as defined by a {@link ButtonInfo ButtonInfo}.
-     * It determines how large the timing ring should be based off of the song progression and the ButtonInfo.
      * @param info The information defining the positioning and timing of this button.
      */
 	public Button(ButtonInfo info) {
@@ -71,7 +68,7 @@ public class Button {
 
     /**
      * Checks if the button has been hit. The detection radius is defined as
-     * {@link Config#HIT_RADIUS HIT_RADIUS} ({@value Config#HIT_RADIUS})
+     * {@link Config#HIT_RADIUS HIT_RADIUS}
      * @param tapX The x position to hit test.
      * @param tapY The y position to hit test.
      * @return True if the hit is within the bounds of the button, otherwise false.
@@ -188,7 +185,7 @@ public class Button {
 
     /**
      * Calculates how close the timing of the hit was to the correct time. The multiplier is proportional to the
-     * amount of time between {@link Config#MAX_TIME_FOR_HIT MAX_TIME_FOR_HIT} ({@value Config#MAX_TIME_FOR_HIT})
+     * amount of time between {@link Config#MAX_TIME_FOR_HIT MAX_TIME_FOR_HIT}
      * and the time defined in the {@link ButtonInfo ButtonInfo}
      * @param time The time in milliseconds of the song at which the button was hit.
      * @return A multiplier between 0 and 1.

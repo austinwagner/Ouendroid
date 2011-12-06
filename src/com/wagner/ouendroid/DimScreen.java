@@ -7,9 +7,7 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 /**
- * User: Austin Wagner
- * Date: 12/5/11
- * Time: 7:58 PM
+ * Draws a black box at half transparency. Gives the effect of a dimmer screen.
  */
 public class DimScreen {
 	private short[] indices = { 0, 1, 2, 0, 2, 3 };
@@ -18,7 +16,6 @@ public class DimScreen {
 	private ShortBuffer indexBuffer;
 
     /**
-     * This class draws a black box at half transparency. Gives the effect of a dimmer screen.
      * @param width The width of the screen.
      * @param height The height of the screen.
      */

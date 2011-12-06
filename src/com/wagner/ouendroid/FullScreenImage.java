@@ -10,9 +10,8 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 /**
- * User: Austin Wagner
- * Date: 12/5/11
- * Time: 12:17 AM
+ * Draws a 480x854 texture to the screen. The texture will stretch horizontally and vertically to fit
+ * the screen if necessary.
  */
 public class FullScreenImage {
     private int textureId;
@@ -27,8 +26,6 @@ public class FullScreenImage {
     private FloatBuffer textureBuffer;
 
     /**
-     * This class draws a 480x854 texture to the screen. The texture will stretch horizontally and vertically to fit
-     * the screen if necessary.
      * @param bitmap The texture to draw on the square.
      * @param width The width of the screen.
      * @param height The height of the screen.

@@ -16,9 +16,7 @@ import java.util.LinkedList;
 import static com.wagner.ouendroid.Config.*;
 
 /**
- * User: Austin Wagner
- * Date: 12/4/11
- * Time: 3:57 PM
+ * Renders the game screen and tracks all states related to running the game.
  */
 public class Game {
     private LinkedList<Button> buttons;
@@ -42,7 +40,6 @@ public class Game {
     private Context context;
 
     /**
-     * This class renders the game screen and tracks all states related to running the game.
      * @param parent The OpenGLRenderer that created this game instance.
      * @param context The context to get the texture bitmaps from.
      */

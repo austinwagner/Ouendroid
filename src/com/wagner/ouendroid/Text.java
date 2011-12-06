@@ -3,9 +3,8 @@ package com.wagner.ouendroid;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
- * User: Austin Wagner
- * Date: 12/4/11
- * Time: 2:48 PM
+ * Automatically aligns {@link Character Characters} to form a single string. Also provides
+ * a function for hit detection. All functions return an instance of this class to allow for chaining.
  */
 public class Text {
     private String text = "";
@@ -17,14 +16,6 @@ public class Text {
     private HorAlign hor = HorAlign.LEFT;
     private VertAlign vert = VertAlign.TOP;
     private float scale = 1.0f;
-
-    /**
-     * This class automatically aligns {@link Character Characters} to form a single string. It also provides
-     * a function for hit detection. All functions return an instance of this class to allow for chaining.
-     */
-    public Text() {
-
-    }
 
     /**
      * Sets the string of characters to render. All non-printing characters will display as blank space.

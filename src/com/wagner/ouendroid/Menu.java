@@ -19,9 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * User: Austin Wagner
- * Date: 12/4/11
- * Time: 3:55 PM
+ * Renders the game menu and tracks all states related to the menu.
  */
 public class Menu {
     private enum State { MAIN, FILES }
@@ -44,7 +42,6 @@ public class Menu {
     }
 
     /**
-     * This class renders the game menu and tracks all states related to the menu.
      * @param parent The OpenGLRenderer that created this game instance.
      * @param context The context to get the texture bitmaps from.
      */

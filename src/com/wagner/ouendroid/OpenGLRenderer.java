@@ -12,9 +12,8 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 /**
- * User: Austin Wagner
- * Date: 12/3/11
- * Time: 11:05 AM
+ * Main renderer for the entire game. Controls all aspects of the game including tracking states and handling
+ * button presses.
  */
 public class OpenGLRenderer implements Renderer {
     private enum State { MENU, GAME }
@@ -32,8 +31,6 @@ public class OpenGLRenderer implements Renderer {
     private Activity parent;
 
     /**
-     * Main renderer for the entire game. Controls all aspects of the game including tracking states and handling
-     * button presses.
      * @param context The context to get the bitmap resources from.
      * @param parent The activity that holds this renderer.
      */

@@ -12,9 +12,7 @@ import java.nio.ShortBuffer;
 import static javax.microedition.khronos.opengles.GL10.*;
 
 /**
- * User: Austin Wagner
- * Date: 12/4/11
- * Time: 10:32 AM
+ * Displays the text "Miss" on the screen which lasts until a specified time.
  */
 public class Miss {
     private static Bitmap bitmap;
@@ -53,7 +51,6 @@ public class Miss {
     }
 
     /**
-     * This class displays the text "Miss" on the screen which lasts until a specified time.
      * @param time The time in milliseconds of time in the song to remove this image.
      * @param x The horizontal postion of the center.
      * @param y The vertical position of the center.

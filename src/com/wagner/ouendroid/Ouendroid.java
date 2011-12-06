@@ -9,9 +9,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 /**
- * User: Austin Wagner
- * Date: 12/3/11
- * Time: 10:55 AM
+ * The main {@link Activity Activity} for the application.
  */
 public class Ouendroid extends Activity{
     private GLSurface view;

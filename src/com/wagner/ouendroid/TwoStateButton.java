@@ -10,12 +10,10 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 /**
- * User: Austin Wagner
- * Date: 12/4/11
- * Time: 7:06 PM
+ * Loads two equal size images and allows you to switch between them by setting the pressed state
+ * when rendering. Also provides a convenience method for determining if a click was inside this object's
+ * hitbox.
  */
-
-
 public class TwoStateButton {
 
     private int normalId;
@@ -35,9 +33,6 @@ public class TwoStateButton {
     private FloatBuffer textureBuffer;
 
     /**
-     * This class loads two equal size images and allows you to switch between them by setting the pressed state
-     * when rendering. It also provides a convenience method for determining if a click was inside this object's
-     * hitbox.
      * @param normal The image to display normally (i.e. the unpressed state)
      * @param pressed The image to display when the button is pressed
      * @param x The horizontal position of the center.

@@ -1,9 +1,7 @@
 package com.wagner.ouendroid;
 
 /**
- * User: Austin Wagner
- * Date: 12/3/11
- * Time: 9:46 PM
+ * Configurable options to change various aspects of the game.
  */
 public class Config {
     public static final float RING_TIME = 1000.0f;

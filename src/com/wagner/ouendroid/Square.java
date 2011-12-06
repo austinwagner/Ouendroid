@@ -10,9 +10,8 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 /**
- * User: Austin Wagner
- * Date: 12/5/11
- * Time: 5:14 PM
+ * Draws a square texture to the screen. The entire texture will always be used, but the
+ * square can be resized.
  */
 public class Square {
     private Bitmap bitmap;
@@ -34,8 +33,6 @@ public class Square {
     private FloatBuffer textureBuffer;
 
     /**
-     * This class draws a square texture to the screen. The entire texture will always be used, but the
-     * square can be resized.
      * @param texture The texture to draw on the square.
      * @param size The size to draw the square.
      * @param x The horizontal position of the center.
