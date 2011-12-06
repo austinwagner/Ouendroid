@@ -33,6 +33,14 @@ public class Square {
     private ShortBuffer indexBuffer;
     private FloatBuffer textureBuffer;
 
+    /**
+     * This class draws a square texture to the screen. The entire texture will always be used, but the
+     * square can be resized.
+     * @param texture The texture to draw on the square.
+     * @param size The size to draw the square.
+     * @param x The horizontal position of the center.
+     * @param y The vertical position of the center.
+     */
     public Square(Bitmap texture, float size, float x, float y) {
         float vertices[] = {
              -size / 2.0f, -size / 2.0f, 0.0f,  // 0, Top Left
@@ -65,8 +73,8 @@ public class Square {
     }
 
     /**
-     * This function draws our square on screen.
-     * @param gl
+     * Draws the textured square to the screen.
+     * @param gl The OpenGL instance to draw to.
      */
     public void draw(GL10 gl) {
         if (loadTexture) {
@@ -102,6 +110,10 @@ public class Square {
         gl.glPopMatrix();
     }
 
+    /**
+     * Loads the bitmap as an OpenGL texture.
+     * @param gl The instance of OpenGL to load the texture to.
+     */
     private void loadGLTexture(GL10 gl) {
         int[] textures = new int[1];
         gl.glGenTextures(1, textures, 0);
@@ -120,6 +132,9 @@ public class Square {
         GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
     }
 
+    /**
+     * Removes the bitmap loaded by this instance.
+     */
     public void unload() {
         bitmap.recycle();
         bitmap = null;

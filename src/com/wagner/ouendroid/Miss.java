@@ -41,11 +41,21 @@ public class Miss {
     private ShortBuffer indexBuffer;
     private FloatBuffer textureBuffer;
 
+    /**
+     * Sets the miss texture to be loaded. All instances of {@link Miss Miss} will use this texture.
+     * @param b The bitmap containing the miss text.
+     */
     public static void initialize(Bitmap b) {
         bitmap = b;
         loadTexture = true;
     }
 
+    /**
+     * This class displays the text "Miss" on the screen which lasts until a specified time.
+     * @param time The time in milliseconds of time in the song to remove this image.
+     * @param x The horizontal postion of the center.
+     * @param y The vertical position of the center.
+     */
     public Miss(int time, float x, float y) {
         ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
         vbb.order(ByteOrder.nativeOrder());
@@ -71,8 +81,8 @@ public class Miss {
     }
 
     /**
-     * This function draws our square on screen.
-     * @param gl
+     * Draws the miss texture to the screen.
+     * @param gl The OpenGL instance to draw to.
      */
     public void draw(GL10 gl) {
         if (loadTexture) {
@@ -108,10 +118,18 @@ public class Miss {
         gl.glPopMatrix();
     }
 
+    /**
+     * Get the time that this image is set to expire.
+     * @return The time in milliseconds of the song time for the image to disappear.
+     */
     public int getTime() {
         return time;
     }
 
+    /**
+     * Loads the bitmap as an OpenGL texture.
+     * @param gl The instance of OpenGL to load the texture to.
+     */
     private void loadGLTexture(GL10 gl) {
         int[] textures = new int[1];
         gl.glGenTextures(1, textures, 0);
@@ -130,6 +148,9 @@ public class Miss {
         GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
     }
 
+    /**
+     * Removes the bitmap that all instances of {@link Miss Miss} use from memory.
+     */
     public static void unload() {
         bitmap.recycle();
         bitmap = null;

@@ -26,6 +26,14 @@ public class FullScreenImage {
 	private ShortBuffer indexBuffer;
     private FloatBuffer textureBuffer;
 
+    /**
+     * This class draws a 480x854 texture to the screen. The texture will stretch horizontally and vertically to fit
+     * the screen if necessary.
+     * @param bitmap The texture to draw on the square.
+     * @param width The width of the screen.
+     * @param height The height of the screen.
+     * @param transparent Set to false if the image does not have transparency to improve performance.
+     */
     public FullScreenImage(Bitmap bitmap, int width, int height, boolean transparent) {
         vertices = new float[] {
 		      0.0f,   0.0f, 0.0f, // 0, Top Left
@@ -63,6 +71,10 @@ public class FullScreenImage {
         this.transparent = transparent;
     }
 
+    /**
+     * Draws the texture to the screen.
+     * @param gl The OpenGL instance to draw to.
+     */
     public void draw(GL10 gl) {
         if (loadTexture) {
             loadGLTexture(gl);
@@ -96,6 +108,10 @@ public class FullScreenImage {
         }
     }
 
+    /**
+     * Loads the bitmap as an OpenGL texture.
+     * @param gl The instance of OpenGL to load the texture to.
+     */
     private void loadGLTexture(GL10 gl) {
         int[] textures = new int[1];
         gl.glGenTextures(1, textures, 0);
@@ -114,6 +130,9 @@ public class FullScreenImage {
         GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
     }
 
+    /**
+     * Removes the bitmap loaded by this instance.
+     */
     public void unload() {
         bitmap.recycle();
         bitmap = null;

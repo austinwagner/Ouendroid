@@ -6,18 +6,10 @@ import javax.microedition.khronos.opengles.GL10;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.*;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.opengl.GLU;
 import android.opengl.GLSurfaceView.Renderer;
-import android.text.TextPaint;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import org.apache.commons.logging.Log;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
 
 /**
  * User: Austin Wagner
@@ -39,6 +31,12 @@ public class OpenGLRenderer implements Renderer {
     private MotionEvent touchEvent;
     private Activity parent;
 
+    /**
+     * Main renderer for the entire game. Controls all aspects of the game including tracking states and handling
+     * button presses.
+     * @param context The context to get the bitmap resources from.
+     * @param parent The activity that holds this renderer.
+     */
     public OpenGLRenderer(Context context, Activity parent) {
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
@@ -49,14 +47,6 @@ public class OpenGLRenderer implements Renderer {
         this.parent = parent;
     }
 
-    /*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * android.opengl.GLSurfaceView.Renderer#onSurfaceCreated(javax.
-         * microedition.khronos.opengles.GL10, javax.microedition.khronos.
-         * egl.EGLConfig)
-	 */
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         gl.glClearDepthf(1.0f);
@@ -65,48 +55,72 @@ public class OpenGLRenderer implements Renderer {
         gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
     }
 
+    /**
+     * Tell the renderer that a touch action is ready for processing.
+     * If another touch event is still pending processing, it will be replaced
+     * @param event The action that needs to be processed.
+     */
     public void handleTouch(MotionEvent event) {
         touchEvent = event;
         touchHandled = false;
     }
 
-    public void handleKey(int code, KeyEvent event) {
-        keyCode = code;
+    /**
+     * Tell the renderer that a key action is ready for processing.
+     * If another key event is still pending processing, it will be replaced
+     * @param event The action that needs to be processed.
+     */
+    public void handleKey(KeyEvent event) {
         keyEvent = event;
         keyHandled = false;
     }
 
+    /**
+     * Gets the last touch event sent for processing.
+     * @return The latest touch event.
+     */
     public MotionEvent getTouchEvent() {
         return touchEvent;
     }
 
+    /**
+     * Checks if there is a pending touch event.
+     * @return True if the last touch event has already been handled, otherwise false.
+     */
     public boolean isTouchHandled() {
         return touchHandled;
     }
 
-    public KeyEvent getKeyEvent() {
-        return keyEvent;
-    }
-
-    public boolean isKeyHandled() {
-        return keyHandled;
-    }
-
-    public void setKeyHandled() {
-        keyHandled = true;
-    }
-
+    /**
+     * Tells the renderer that the touch event has been handled.
+     */
     public void setTouchHandled() {
         touchHandled = true;
     }
 
-    /*
-      * (non-Javadoc)
-      *
-      * @see
-      * android.opengl.GLSurfaceView.Renderer#onDrawFrame(javax.
-          * microedition.khronos.opengles.GL10)
-      */
+    /**
+     * Gets the last key event sent for processing.
+     * @return The latest key event.
+     */
+    public KeyEvent getKeyEvent() {
+        return keyEvent;
+    }
+
+    /**
+     * Checks if there is a pending key event.
+     * @return True if the last key event has already been handled, otherwise false.
+     */
+    public boolean isKeyHandled() {
+        return keyHandled;
+    }
+
+    /**
+     * Tells the renderer that the key event has been handled.
+     */
+    public void setKeyHandled() {
+        keyHandled = true;
+    }
+
     public void onDrawFrame(GL10 gl) {
         // Clears the screen and depth buffer.
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
@@ -130,18 +144,14 @@ public class OpenGLRenderer implements Renderer {
 
     }
 
+    /**
+     * Stops the game and redisplays the menu
+     */
     public void returnToMenu() {
         game.stop();
         state = State.MENU;
     }
 
-    /*
-      * (non-Javadoc)
-      *
-      * @see
-      * android.opengl.GLSurfaceView.Renderer#onSurfaceChanged(javax.
-          * microedition.khronos.opengles.GL10, int, int)
-      */
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         gl.glViewport(0, 0, width, height);
         gl.glMatrixMode(GL10.GL_PROJECTION);
@@ -157,10 +167,20 @@ public class OpenGLRenderer implements Renderer {
         game = new Game(this, context);
     }
 
+    /**
+     * Reintializes and starts the game with a new song and note chart.
+     * @param song The path to the song to play as a URI (e.g. file:///sdcard/song.mp3)
+     * @param chart The file path to the note chart (e.g. /sdcard/song.oed)
+     */
     public void startGame(String song, String chart) {
-        game.initialize(context, song, chart);
+        game.initialize(song, chart);
         state = State.GAME;
     }
+
+    /**
+     * Unloads all bitmap resources associated with the game.
+     * IMPORTANT: The entire renderer MUST be reinitialized if this function is called.
+     */
     public void unload() {
         game.stop();
         game.unload();
@@ -170,10 +190,20 @@ public class OpenGLRenderer implements Renderer {
         menu.unload();
     }
 
+    /**
+     * Gets the height of the renderer as set by {@link android.opengl.GLSurfaceView.Renderer#onSurfaceChanged(
+     * javax.microedition.khronos.opengles.GL10, int, int) onSurfaceChanged}
+     * @return The height of the renderer.
+     */
     public int getHeight() {
         return height;
     }
 
+    /**
+     * Gets the width of the renderer as set by {@link android.opengl.GLSurfaceView.Renderer#onSurfaceChanged(
+     * javax.microedition.khronos.opengles.GL10, int, int) onSurfaceChanged}
+     * @return The width of the renderer.
+     */
     public int getWidth() {
         return width;
     }

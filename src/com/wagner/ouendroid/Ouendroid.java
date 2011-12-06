@@ -38,13 +38,16 @@ public class Ouendroid extends Activity{
 
     @Override
     public void onBackPressed() {
+        // The back button does not get passed as a key down event, so catch it here instead
         view.onKeyDown(KeyEvent.KEYCODE_BACK, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // Let the system handle the volume control
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)
             return false;
+
         return view.onKeyDown(keyCode, event);
     }
 }

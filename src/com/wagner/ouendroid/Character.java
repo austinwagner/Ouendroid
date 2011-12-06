@@ -2,7 +2,6 @@ package com.wagner.ouendroid;
 
 import android.graphics.Bitmap;
 import android.opengl.GLUtils;
-import org.apache.commons.logging.Log;
 
 import javax.microedition.khronos.opengles.GL10;
 import java.nio.ByteBuffer;
@@ -23,20 +22,30 @@ public class Character {
     private static boolean loadTexture = true;
     private char ascii;
     private float x, y, r, g, b;
-
-
-
 	private short[] indices = { 0, 1, 2, 0, 2, 3 };
 
 	private FloatBuffer vertexBuffer;
 	private ShortBuffer indexBuffer;
     private FloatBuffer textureBuffer;
 
+    /**
+     * Sets the character map to be loaded. All instances of {@link Character Character} will use this texture.
+     * @param b The bitmap containing the miss text.
+     */
     public static void initialize(Bitmap b) {
         bitmap = b;
         loadTexture = true;
     }
 
+    /**
+     * This class displays characters on the screen from the set of printing ASCII characters.
+     * @param ascii The ASCII character code of the character to print.
+     * @param x The horizontal postion of the left.
+     * @param y The vertical position of the top.
+     * @param r The level of the red channel from 0 to 1.
+     * @param g The level of the green channel from 0 to 1.
+     * @param b The level of the blue channel from 0 to 1.
+     */
     public Character(char ascii, float x, float y, float r, float g, float b, float scale) {
         float vertices[] = {
 		               0.0f,          0.0f, 0.0f,  // 0, Top Left
@@ -67,14 +76,10 @@ public class Character {
         this.g = g;
     }
 
-	public Character(char ascii, float x, float y, float r, float g, float b) {
-        this(ascii, x, y, r, g, b, 1.0f);
-    }
-
 	/**
-	 * This function draws our square on screen.
-	 * @param gl
-	 */
+     * Draws the character to the screen.
+     * @param gl The OpenGL instance to draw to.
+     */
 	public void draw(GL10 gl) {
         if (loadTexture) {
             loadGLTexture(gl);
@@ -82,11 +87,6 @@ public class Character {
         }
 
         gl.glPushMatrix();
-        drawButton(gl);
-        gl.glPopMatrix();
-	}
-
-    private void drawButton(GL10 gl) {
         int row = (ascii - 32) / 18;
         int col = (ascii - 32) % 18;
 
@@ -120,8 +120,13 @@ public class Character {
 
         gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
         gl.glDisable(GL10.GL_TEXTURE_2D);
-    }
+        gl.glPopMatrix();
+	}
 
+    /**
+     * Loads the bitmap as an OpenGL texture.
+     * @param gl The instance of OpenGL to load the texture to.
+     */
     private void loadGLTexture(GL10 gl) {
         int[] textures = new int[1];
         gl.glGenTextures(1, textures, 0);
@@ -140,6 +145,9 @@ public class Character {
         GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
     }
 
+    /**
+     * Removes the bitmap that all instances of {@link Character Character} use from memory.
+     */
     public static void unload() {
         bitmap.recycle();
         bitmap = null;

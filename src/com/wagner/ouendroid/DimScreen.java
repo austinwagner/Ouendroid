@@ -17,6 +17,11 @@ public class DimScreen {
     private FloatBuffer vertexBuffer;
 	private ShortBuffer indexBuffer;
 
+    /**
+     * This class draws a black box at half transparency. Gives the effect of a dimmer screen.
+     * @param width The width of the screen.
+     * @param height The height of the screen.
+     */
     public DimScreen(int width, int height) {
         float[] vertices = new float[] {
 		      0.0f,   0.0f, 0.0f, // 0, Top Left
@@ -39,6 +44,10 @@ public class DimScreen {
 		indexBuffer.position(0);
     }
 
+    /**
+     * Draws the translucent square to the screen.
+     * @param gl The OpenGL instance to draw to.
+     */
     public void draw(GL10 gl) {
 
         gl.glColor4f(0.0f, 0.0f, 0.0f, 0.5f);

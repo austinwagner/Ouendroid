@@ -9,7 +9,6 @@ import java.nio.ShortBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
 import android.opengl.GLUtils;
-import android.util.Log;
 
 import static com.wagner.ouendroid.Config.*;
 
@@ -40,11 +39,20 @@ public class Button {
 	private ShortBuffer indexBuffer;
     private FloatBuffer textureBuffer;
 
+    /**
+     * Sets the button texture to be loaded. All instances of {@link Button Button} will use this texture.
+     * @param b The bitmap containing the miss text.
+     */
     public static void initialize(Bitmap b) {
         bitmap = b;
         loadTexture = true;
     }
 
+    /**
+     * This class displays a button and timing ring on the screen as defined by a {@link ButtonInfo ButtonInfo}.
+     * It determines how large the timing ring should be based off of the song progression and the ButtonInfo.
+     * @param info The information defining the positioning and timing of this button.
+     */
 	public Button(ButtonInfo info) {
 		ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
 		vbb.order(ByteOrder.nativeOrder());
@@ -61,18 +69,30 @@ public class Button {
         this.info = info;
     }
 
+    /**
+     * Checks if the button has been hit. The detection radius is defined as
+     * {@link Config#HIT_RADIUS HIT_RADIUS} ({@value Config#HIT_RADIUS})
+     * @param tapX The x position to hit test.
+     * @param tapY The y position to hit test.
+     * @return True if the hit is within the bounds of the button, otherwise false.
+     */
     public boolean isHit(float tapX, float tapY) {
         return (tapX - info.x) * (tapX - info.x) + (tapY - info.y) * (tapY - info.y) < HIT_RADIUS * HIT_RADIUS;
     }
 
+    /**
+     * Gets the information associated with this {@link Button Button}.
+     * @return The information about this button.
+     */
     public ButtonInfo getInfo() {
        return info;
     }
 
 	/**
-	 * This function draws our square on screen.
-	 * @param gl
-	 */
+     * Draws the button and its ring to the screen.
+     * @param gl The OpenGL instance to draw to.
+     * @param time The time in milliseconds of song time.
+     */
 	public void draw(GL10 gl, int time) {
         if (loadTexture) {
             loadGLTexture(gl);
@@ -86,6 +106,10 @@ public class Button {
         gl.glPopMatrix();
 	}
 
+    /**
+     * Draws the button to the screen.
+     * @param gl The OpenGL instance to draw to.
+     */
     private void drawButton(GL10 gl) {
         float textureCoordinates[] = {
               0.125f * (info.number - 1), 0.125f * (info.color),
@@ -122,6 +146,11 @@ public class Button {
         gl.glDepthMask(true);
     }
 
+    /**
+     * Draws the ring to the screen.
+     * @param gl The OpenGL instance to draw to.
+     * @param time The time in milliseconds of song time.
+     */
     private void drawRing(GL10 gl, int time) {
         float delta = info.time - time;
         float radius;
@@ -157,6 +186,13 @@ public class Button {
         gl.glDisable(GL10.GL_BLEND);
     }
 
+    /**
+     * Calculates how close the timing of the hit was to the correct time. The multiplier is proportional to the
+     * amount of time between {@link Config#MAX_TIME_FOR_HIT MAX_TIME_FOR_HIT} ({@value Config#MAX_TIME_FOR_HIT})
+     * and the time defined in the {@link ButtonInfo ButtonInfo}
+     * @param time The time in milliseconds of the song at which the button was hit.
+     * @return A multiplier between 0 and 1.
+     */
     public float scoreMultiplier(int time) {
         float delta = Math.abs(time - info.time);
         if (delta > MAX_TIME_FOR_HIT)
@@ -165,10 +201,19 @@ public class Button {
             return 1.0f - (delta / MAX_TIME_FOR_HIT);
     }
 
+    /**
+     * Converts degrees to radians.
+     * @param angle The angle in degrees.
+     * @return The angle in radians.
+     */
     private float degreesToRadian(float angle) {
         return angle * (float)Math.PI / 180.0f;
     }
 
+    /**
+     * Loads the bitmap as an OpenGL texture.
+     * @param gl The instance of OpenGL to load the texture to.
+     */
     private void loadGLTexture(GL10 gl) {
         int[] textures = new int[1];
         gl.glGenTextures(1, textures, 0);
@@ -187,9 +232,11 @@ public class Button {
         GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
     }
 
+    /**
+     * Removes the bitmap that all instances of {@link Miss Miss} use from memory.
+     */
     public static void unload() {
         bitmap.recycle();
         bitmap = null;
-        loadTexture = true;
     }
 }

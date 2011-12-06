@@ -30,60 +30,31 @@ public class Menu {
     private State state = State.MAIN;
     private ArrayList<String> files;
     private ArrayList<Text> fileText;
-    private int textureId;
-    private boolean loadTexture = true;
-    private Bitmap bitmap;
-    private float vertices[];
-	private short[] indices = { 0, 1, 2, 0, 2, 3 };
-    float textureCoordinates[] = {
-                  0.0f,         0.0f,
-                  0.0f, 0.833984375f,
-              0.46875f, 0.833984375f,
-              0.46875f,         0.0f
-    };
-    private FloatBuffer vertexBuffer;
-	private ShortBuffer indexBuffer;
-    private FloatBuffer textureBuffer;
+    private FullScreenImage background;
     private TwoStateButton songButton;
     private boolean songButtonPressed = false;
     private int selected = -1;
 
+    /**
+     * Removes the bitmaps loaded by this instance.
+     */
     public void unload() {
-        bitmap.recycle();
-        bitmap = null;
+        background.unload();
+        songButton.unload();
     }
 
+    /**
+     * This class renders the game menu and tracks all states related to the menu.
+     * @param parent The OpenGLRenderer that created this game instance.
+     * @param context The context to get the texture bitmaps from.
+     */
     public Menu(OpenGLRenderer parent, Context context) {
         this.parent = parent;
 
-        vertices = new float[] {
-		                   0.0f,               0.0f, 0.0f, // 0, Top Left
-		                   0.0f, parent.getHeight(), 0.0f, // 1, Bottom Left
-		      parent.getWidth(), parent.getHeight(), 0.0f, // 2, Bottom Right
-		      parent.getWidth(),               0.0f, 0.0f  // 3, Top Right
-	    };
-
-        ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
-		vbb.order(ByteOrder.nativeOrder());
-		vertexBuffer = vbb.asFloatBuffer();
-		vertexBuffer.put(vertices);
-		vertexBuffer.position(0);
-
-		ByteBuffer ibb = ByteBuffer.allocateDirect(indices.length * 2);
-		ibb.order(ByteOrder.nativeOrder());
-		indexBuffer = ibb.asShortBuffer();
-		indexBuffer.put(indices);
-		indexBuffer.position(0);
-
-        ByteBuffer tbb = ByteBuffer.allocateDirect(vertices.length * 4);
-		tbb.order(ByteOrder.nativeOrder());
-		textureBuffer = tbb.asFloatBuffer();
-		textureBuffer.put(textureCoordinates);
-		textureBuffer.position(0);
-
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
-        bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.menu, o);
+        background = new FullScreenImage(BitmapFactory.decodeResource(context.getResources(), R.drawable.menu, o),
+                parent.getWidth(), parent.getHeight(), false);
 
         songButton = new TwoStateButton(
                 BitmapFactory.decodeResource(context.getResources(), R.drawable.select, o),
@@ -93,15 +64,18 @@ public class Menu {
 
     }
 
+    /**
+     * Draws the menu screen and processes events.
+     * @param gl The OpenGL instance to draw to.
+     */
     public void draw(GL10 gl) {
-        if (loadTexture) {
-            loadGLTexture(gl);
-            loadTexture = false;
-        }
 
-        drawBackground(gl);
+        background.draw(gl);
 
+        // If the main screen is showing
         if (state == State.MAIN) {
+            // When the select song button is pressed, load the list of files from the SD card and go to the song
+            // list screen
             if (!parent.isTouchHandled() && songButton.isHit(parent.getTouchEvent().getX(), parent.getTouchEvent().getY())
                     && parent.getTouchEvent().getAction() == MotionEvent.ACTION_UP) {
                 songButtonPressed = false;
@@ -124,21 +98,27 @@ public class Menu {
                 }
 
                 state = State.FILES;
+            // Handle pressing the button down
             } else if (!parent.isTouchHandled() && songButton.isHit(parent.getTouchEvent().getX(), parent.getTouchEvent().getY())) {
                 songButtonPressed = true;
+            // Handle moving off of the button without releasing
             } else if (!parent.isTouchHandled()&& !songButton.isHit(parent.getTouchEvent().getX(), parent.getTouchEvent().getY())) {
                 songButtonPressed = false;
             }
             songButton.draw(gl, songButtonPressed);
+        // If the song selection is showing
         } else {
+            // If the back key was pressed, go back to the main menu
             if (!parent.isKeyHandled() && parent.getKeyEvent().getKeyCode() == KeyEvent.KEYCODE_BACK) {
                 state = State.MAIN;
                 parent.setKeyHandled();
             }
 
+            // Clear the last selected item if the screen was tapped
             if (!parent.isTouchHandled() && parent.getTouchEvent().getAction() == MotionEvent.ACTION_DOWN)
                 selected = -1;
 
+            // Print the file list to the screen while checking if any of the songs were chosen
             for (int i = 0; i < files.size(); i++) {
                 Text t = fileText.get(i);
                 if (!parent.isTouchHandled() && parent.getTouchEvent().getAction() == MotionEvent.ACTION_DOWN &&
@@ -151,6 +131,7 @@ public class Menu {
                 t.draw(gl);
             }
 
+            // If the tap was released while hovering over a song, load that song and go to the game screen
             if (selected != -1 && !parent.isTouchHandled() && parent.getTouchEvent().getAction() == MotionEvent.ACTION_UP &&
                     fileText.get(selected).isHit(parent.getTouchEvent().getX(), parent.getTouchEvent().getY())) {
                 String chosen = files.get(selected);
@@ -158,49 +139,13 @@ public class Menu {
                         "/sdcard/" + chosen);
                 state = State.MAIN;
                 selected = -1;
+            // If the tap was released over nothing, deselect the item
             } else if (!parent.isTouchHandled() && parent.getTouchEvent().getAction() == MotionEvent.ACTION_UP) {
                 selected = -1;
             }
         }
 
         parent.setTouchHandled();
-    }
-
-    private void drawBackground(GL10 gl) {
-        gl.glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
-
-        gl.glEnable(GL10.GL_TEXTURE_2D);
-		gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-
-		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, textureBuffer);
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
-
-		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
-
-		gl.glDrawElements(GL10.GL_TRIANGLES, indices.length, GL10.GL_UNSIGNED_SHORT, indexBuffer);
-		gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-
-        gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-        gl.glDisable(GL10.GL_TEXTURE_2D);
-    }
-
-    private void loadGLTexture(GL10 gl) {
-        int[] textures = new int[1];
-        gl.glGenTextures(1, textures, 0);
-        textureId = textures[0];
-        gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER,
-			    GL10.GL_LINEAR);
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER,
-                GL10.GL_LINEAR);
-
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S,
-                GL10.GL_CLAMP_TO_EDGE);
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T,
-                GL10.GL_CLAMP_TO_EDGE);
-
-        GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
     }
 
 }

@@ -34,6 +34,19 @@ public class TwoStateButton {
 	private ShortBuffer indexBuffer;
     private FloatBuffer textureBuffer;
 
+    /**
+     * This class loads two equal size images and allows you to switch between them by setting the pressed state
+     * when rendering. It also provides a convenience method for determining if a click was inside this object's
+     * hitbox.
+     * @param normal The image to display normally (i.e. the unpressed state)
+     * @param pressed The image to display when the button is pressed
+     * @param x The horizontal position of the center.
+     * @param y The vertical position of the center.
+     * @param width The width to draw the button.
+     * @param height The height to draw the button.
+     * @param texFactW The location of the edge of the texture. Calcualted as (width of button image / width of texture)
+     * @param texFactH The location of the edge of the texture. Calcualted as (height of button image / height of texture)
+     */
     public TwoStateButton(Bitmap normal, Bitmap pressed, float x, float y, int width, int height, float texFactW, float texFactH) {
         vertices = new float[] {
 		     -width / 2, -height / 2, 0.0f, // 0, Top Left
@@ -75,6 +88,11 @@ public class TwoStateButton {
         h = height;
     }
 
+    /**
+     * Draws the button to the screen.
+     * @param gl The OpenGL instance to draw to.
+     * @param pressed The state to be drawn
+     */
     public void draw(GL10 gl, boolean pressed) {
         if (loadTexture) {
             loadGLTexture(gl);
@@ -102,6 +120,10 @@ public class TwoStateButton {
         gl.glPopMatrix();
     }
 
+    /**
+     * Loads the bitmaps as an OpenGL texture.
+     * @param gl The instance of OpenGL to load the texture to.
+     */
     private void loadGLTexture(GL10 gl) {
         int[] textures = new int[1];
         gl.glGenTextures(1, textures, 0);
@@ -140,6 +162,9 @@ public class TwoStateButton {
         return (hitX <= x + w / 2 && hitX >= x - w / 2 && hitY <= y + h / 2 && hitY >= y - h / 2);
     }
 
+    /**
+     * Removes the bitmaps loaded by this instance.
+     */
     public void unload() {
         normal.recycle();
         normal = null;
